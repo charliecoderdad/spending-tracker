@@ -1,6 +1,10 @@
 from datetime import datetime
 from tracker_app import db
 
+class Expense(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	description = db.Column(db.Text)	
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)    

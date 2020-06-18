@@ -4,8 +4,35 @@
 {% block content %}
 <h1 class="text-primary">Configure Spending Tracker</h1>
 
-<div class="row">
+<div class="row" id="expenses-config">	
 	
+	<div class="col-sm border rounded">
+		<h2>Add New Expense Category</h2>
+		<form method="POST" action={{ url_for('configure') }}>
+			{{ newCategoryForm.csrf_token }}
+			{{ newCategoryForm.category.label }} {{ newCategoryForm.category(size=20) }}
+			{{ newCategoryForm.submit }}		
+		</form>
+	</div>	
+	<div class="col-sm border rounded">
+		<h2>Available Expense Categories</h2>	
+		<ul>	
+			{% for cat in categories %}
+				<li>{{ cat.category }} (<a href={{ url_for('deleteCategory', categoryId=cat.id) }}>Delete</a>)</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+<div class="row" id="users-config">	
+	<div class="col-sm border rounded">
+		<h2>Add New User</h2>
+		<form method="POST" action={{ url_for('configure') }}>
+			{{ newUserForm.csrf_token }}
+			{{ newUserForm.username.label }} {{ newUserForm.username(size=20) }}
+			{{ newUserForm.submit }}		
+		</form>
+	</div>	
 	<div class="col-sm border rounded">
 		<h2>Current Users</h2>	
 		<ul>	
@@ -15,16 +42,6 @@
 		</ul>
 	</div>
 	
-	<div class="col-sm border rounded">
-		<h2>Add New User</h2>
-		<form method="POST" action={{ url_for('configure') }}>
-			{{ newUserForm.csrf_token }}
-			{{ newUserForm.username.label }} {{ newUserForm.username(size=20) }}
-			{{ newUserForm.submit }}		
-		</form>
-	</div>
-	
 </div>
 
-	
 {% endblock %}
