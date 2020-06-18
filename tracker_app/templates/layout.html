@@ -9,21 +9,7 @@
 </head>
 
 <body>	
-	<div class="container">
-		
-		<div class="row"><div class="col-md-8">
-			<!-- This is for flash messages -->
-			{% with messages = get_flashed_messages(with_categories=true) %}
-				{% if messages %}
-					{% for category, message in messages %}
-						<div class="alert alert-{{ category }}">
-							{{ message }}
-						</div>
-					{% endfor %}
-				{% endif %}
-			{% endwith %}
-			<!-- end of flash messages section -->		
-		</div></div>
+	<div class="container">		
 		
 		<!-- Build out site nav -->
 		{% set navigation_bar = [
@@ -40,6 +26,20 @@
 			</nav>			
 		</div>
 		<!-- END: Build out site nav -->
+
+		<div class="row"><div class="col-md-8">
+			<!-- This is for flash messages -->
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+			<!-- end of flash messages section -->		
+		</div></div>
 				
 		<div class="row" id="content">
 			<div class="col-sm">

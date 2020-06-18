@@ -2,5 +2,19 @@
 {% set activePage = "home" %}
 
 {% block content %}
-<h1>Main Page</h1>
+<h1 class="text-primary">Spending Tracker</h1>
+
+<div class="row" id="add-expense">	
+	
+	<div class="col-sm border rounded">
+		<h2>Input an expense</h2>
+		<form method="POST" action={{ url_for('home') }}>
+			{{ newExpenseForm.csrf_token }}
+			{{ newExpenseForm.date.label }} {{ newExpenseForm.date(class='datepicker') }}<br>
+			{{ newExpenseForm.category.label }} {{ newExpenseForm.category }}<br>
+			{{ newExpenseForm.description }}<br>
+			{{ newExpenseForm.submit }}<br>
+		</form>
+	</div>		
+</div>
 {% endblock %}
