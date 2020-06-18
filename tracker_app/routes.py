@@ -7,14 +7,13 @@ from datetime import date
 @app.route("/", methods=["GET","POST"])
 def home():
 	newExpenseForm = forms.NewExpenseForm()
-	newExpenseForm.expenseCategory.choices = [(c.categoryId, c.expenseCategory) for c in Category.query.all()]
+	sortedCategoriesList = [(c.expenseCategory) for c in Category.query.all()]
+	sortedCategoriesList.sort()
+	newExpenseForm.expenseCategory.choices = sortedCategoriesList
 	newExpenseForm.spender.choices = [(u.userId, u.username) for u in User.query.all()]
-	print(f"KEEP GOING {newExpenseForm.validate_on_submit()}")
 	if newExpenseForm.validate_on_submit():	
 		flash(f"Created a new expense record", "info")
 		return redirect(url_for('home'))
-	else:
-		print("HeY NOW HEY NOW11")
 	return render_template('index.html', newExpenseForm=newExpenseForm)
     
 @app.route("/configure", methods=["GET","POST"])

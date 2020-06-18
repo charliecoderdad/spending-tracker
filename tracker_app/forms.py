@@ -16,8 +16,8 @@ class NewExpenseForm(FlaskForm):
 
 class NewCategoryForm(FlaskForm):
 	category = StringField('Expense Category', validators=[DataRequired()])
-	submit = SubmitField('Add New Expense Category')
+	submit = SubmitField('Create Category')
 
 class NewUserForm(FlaskForm):
-	username = 	StringField('User name', validators=[DataRequired()])
-	submit = SubmitField('Add New User')
+	username = 	StringField('Spender name', validators=[DataRequired()])
+	submit = SubmitField('Create Spender')
