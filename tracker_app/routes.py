@@ -28,6 +28,6 @@ def deleteUser(userid):
 	flash(f"User '{deletedUser}' has been successfully removed", "success")
 	return redirect(url_for('configure'))
 	
-@app.route("/data")
+@app.route("/showData")
 def showData():
     return render_template('data.html')
