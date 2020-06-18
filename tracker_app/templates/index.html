@@ -8,13 +8,22 @@
 	
 	<div class="col-sm border rounded">
 		<h2>Input an expense</h2>
-		<form method="POST" action={{ url_for('home') }}>
-			{{ newExpenseForm.csrf_token }}
-			{{ newExpenseForm.date.label }} {{ newExpenseForm.date(class='datepicker') }}<br>
-			{{ newExpenseForm.category.label }} {{ newExpenseForm.category }}<br>
-			{{ newExpenseForm.description }}<br>
-			{{ newExpenseForm.submit }}<br>
+		<form action={{ url_for('home') }} method="POST">
+			<fieldset class="form-group">				
+				{{ newExpenseForm.csrf_token }}
+				{{ newExpenseForm.date.label }} {{ newExpenseForm.date(class='datepicker') }}<br>
+				{{ newExpenseForm.expenseCategory.label }} {{ newExpenseForm.expenseCategory }}<br>
+				{{ newExpenseForm.spender.label }} {{ newExpenseForm.spender }}<br>
+				{{ newExpenseForm.amount.label }} {{ newExpenseForm.amount }}
+				{% if newExpenseForm.errors.amount %}
+					<span class="text-danger small">{{ newExpenseForm.errors.amount }}</span>
+				{% endif %}
+				<br>
+				{{ newExpenseForm.description }}<br>
+				{{ newExpenseForm.submit }}				
+			</fieldset>			
 		</form>
+		
 	</div>		
 </div>
 {% endblock %}

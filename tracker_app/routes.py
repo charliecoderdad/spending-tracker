@@ -2,17 +2,19 @@ from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
 from tracker_app import forms
 from tracker_app.models import User, Category
+from datetime import date
 
 @app.route("/", methods=["GET","POST"])
 def home():
-	print("CHARLIE IS GETTING NEW EXPENSE FORM SON")
 	newExpenseForm = forms.NewExpenseForm()
-	cats = Category.query.all()
-	catList = []
-	for cat in cats:
-		catList.append(cat.expenseCategory)
-	newExpenseForm.category.choices = catList
-	
+	newExpenseForm.expenseCategory.choices = [(c.categoryId, c.expenseCategory) for c in Category.query.all()]
+	newExpenseForm.spender.choices = [(u.userId, u.username) for u in User.query.all()]
+	print(f"KEEP GOING {newExpenseForm.validate_on_submit()}")
+	if newExpenseForm.validate_on_submit():	
+		flash(f"Created a new expense record", "info")
+		return redirect(url_for('home'))
+	else:
+		print("HeY NOW HEY NOW11")
 	return render_template('index.html', newExpenseForm=newExpenseForm)
     
 @app.route("/configure", methods=["GET","POST"])

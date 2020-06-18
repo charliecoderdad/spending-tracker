@@ -4,9 +4,9 @@
 {% block content %}
 <h1 class="text-primary">Configure Spending Tracker</h1>
 
-<div class="row" id="expenses-config">	
+<div class="row border rounded my-3 py-3" id="expenses-config">	
 	
-	<div class="col-sm border rounded">
+	<div class="col-sm">
 		<h2>Add New Expense Category</h2>
 		<form method="POST" action={{ url_for('configure') }}>
 			{{ newCategoryForm.csrf_token }}
@@ -14,7 +14,7 @@
 			{{ newCategoryForm.submit }}		
 		</form>
 	</div>	
-	<div class="col-sm border rounded">
+	<div class="col-sm">
 		<h2>Available Expense Categories</h2>	
 		<ul>	
 			{% for cat in categories %}
@@ -24,8 +24,8 @@
 	</div>
 </div>
 
-<div class="row" id="users-config">	
-	<div class="col-sm border rounded">
+<div class="row border rounded my-3 py-3" id="users-config">	
+	<div class="col-sm">
 		<h2>Add New User</h2>
 		<form method="POST" action={{ url_for('configure') }}>
 			{{ newUserForm.csrf_token }}
@@ -33,7 +33,7 @@
 			{{ newUserForm.submit }}		
 		</form>
 	</div>	
-	<div class="col-sm border rounded">
+	<div class="col-sm">
 		<h2>Current Users</h2>	
 		<ul>	
 			{% for user in users %}

@@ -18,7 +18,7 @@
 			('showData', 'Data')			
 		] %}
 		
-		<div class="row" id="sitenav">
+		<div class="row my-3" id="sitenav">
 			<nav class="nav nav-pills nav-fill">
 				{% for id, text in navigation_bar %}
 					<a class="nav-item nav-link {% if id == activePage %} active{% endif %}" href="{{ url_for(id) }}">{{ text }}</a>
@@ -27,7 +27,7 @@
 		</div>
 		<!-- END: Build out site nav -->
 
-		<div class="row"><div class="col-md-8">
+		<div class="row my-3"><div class="col-md-8">
 			<!-- This is for flash messages -->
 			{% with messages = get_flashed_messages(with_categories=true) %}
 				{% if messages %}
