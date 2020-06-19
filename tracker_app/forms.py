@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, DecimalField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, DecimalField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, NumberRange
 from tracker_app.models import Category, User
@@ -16,6 +16,7 @@ class NewExpenseForm(FlaskForm):
 
 class NewCategoryForm(FlaskForm):
 	category = StringField('Expense Category', validators=[DataRequired()])
+	discretionary = BooleanField('Discretionary', default=False)
 	submit = SubmitField('Create Category')
 
 class NewUserForm(FlaskForm):

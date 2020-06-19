@@ -2,5 +2,20 @@
 {% set activePage = "showData" %}
 
 {% block content %}
-<h1>Data placeholder</h1>
+<h1 class="text-primary">Data placeholder</h1>
+
+<div class="row" id="list-expense">	
+	
+	<div class="col-sm border rounded">
+		{% for expense in expenses %}
+			Date: {{ expense.date }}<br>
+			CatId: {{ expense.categoryId }}<br>
+			Spender: {{ expense.spenderId }}<br>
+			Amount: {{ expense.amount }}<br>
+			Description: {{ expense.description }}<br>
+			<br>
+		{% endfor %}
+		
+	</div>		
+</div>
 {% endblock %}

@@ -3,8 +3,11 @@ from tracker_app import db
 
 class Expense(db.Model):
 	expenseId = db.Column(db.Integer, primary_key=True)
-	amount = db.Column(db.Numeric(precision=2))
-	description = db.Column(db.Text)	
+	date = db.Column(db.DateTime, nullable=False)
+	categoryId = db.Column(db.Integer, db.ForeignKey('category.categoryId'), nullable=False)
+	spenderId = db.Column(db.Integer, db.ForeignKey('user.userId'), nullable=False)
+	amount = db.Column(db.Numeric(precision=2), nullable=False)
+	description = db.Column(db.Text)
 	def __repr__(self):
 		return f"Expense('{self.expenseId}')"
 
@@ -17,5 +20,6 @@ class User(db.Model):
 class Category(db.Model):
 	categoryId = db.Column(db.Integer, primary_key=True)
 	expenseCategory = db.Column(db.String(50), unique=True, nullable=False)
+	discretionary = db.Column(db.Boolean, nullable=False)
 	def __repr__(self):
 		return f"Category('{self.categoryId}', '{self.category}')"	
