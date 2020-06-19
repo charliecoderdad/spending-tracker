@@ -62,4 +62,4 @@ def deleteUser(userid):
 	
 @app.route("/showData")
 def showData():
-    return render_template('data.html', expenses=Expense.query.all())
+    return render_template('data.html', expenses=Expense.query.all(), User=User, Category=Category)

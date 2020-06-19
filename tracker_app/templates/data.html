@@ -9,8 +9,8 @@
 	<div class="col-sm border rounded">
 		{% for expense in expenses %}
 			Date: {{ expense.date }}<br>
-			CatId: {{ expense.categoryId }}<br>
-			Spender: {{ expense.spenderId }}<br>
+			Category: {{ Category.query.filter_by(categoryId = expense.categoryId).first().expenseCategory }}<br>
+			Spender: {{ User.query.filter_by(userId = expense.spenderId).first().username }}<br>
 			Amount: {{ expense.amount }}<br>
 			Description: {{ expense.description }}<br>
 			<br>
