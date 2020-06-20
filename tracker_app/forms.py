@@ -5,6 +5,14 @@ from wtforms.validators import DataRequired, NumberRange
 from tracker_app.models import Category, User
 from datetime import date
 
+class ExpenseConfigureForm(FlaskForm):
+	yearChoices = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+	monthChoices = [(1,'January'), (2,'February'), (3,'March'), (4,'April'), (5,'May'), (6,'June'),
+					(7, 'July'), (8,'August'), (9,'September'), (10,'October'), (11,'November'), (12,'December')]
+	year = SelectField('Year', choices=yearChoices, validate_choice=False)
+	month = SelectField('Month', choices=monthChoices, validate_choice=False)
+	submit = SubmitField('Show Expenses')
+
 class NewExpenseForm(FlaskForm):
 	# Get list of categories for category pull down		
 	date = DateField('Expense Date', validators=[DataRequired()], default=date.today)

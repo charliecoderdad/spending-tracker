@@ -2,7 +2,38 @@ from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
 from tracker_app import forms, displayData
 from tracker_app.models import User, Category, Expense
-from datetime import date
+from sqlalchemy import and_
+import calendar
+import datetime
+
+@app.route("/showData/", methods=["GET", "POST"])
+@app.route("/showData/<year>/<month>", methods=["GET", "POST"])
+def showData(year='none', month='none'):
+	expenseConfigForm = forms.ExpenseConfigureForm()
+	if expenseConfigForm.validate_on_submit():
+		print("YO dawg I got here son")
+		print(f"Year: {expenseConfigForm.year.data}")
+		print(f"Month: {expenseConfigForm.month.data}")
+		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
+		
+	if year == "none":
+		year = datetime.datetime.today().year
+		month = datetime.datetime.today().month
+		
+	num_days = calendar.monthrange(int(year), int(month))[1]
+	start_date = datetime.date(int(year), int(month), 1)
+	end_date = datetime.date(int(year), int(month), num_days)
+	
+	expenses = Expense.query.filter(and_(
+						Expense.date >= start_date,
+						Expense.date <= end_date
+					)).order_by(Expense.date.desc())				
+				
+	display = displayData.DisplayData(expenses)
+	myHtml = display.getPage()
+	monthStr = start_date.strftime("%B, %Y")	
+		
+	return render_template('data.html', myHtml=myHtml, monthStr=monthStr, expenseConfigForm=expenseConfigForm)
 
 @app.route("/", methods=["GET","POST"])
 def home():
@@ -12,11 +43,6 @@ def home():
 	newExpenseForm.expenseCategory.choices = sortedCategoriesList
 	newExpenseForm.spender.choices = [(u.userId, u.username) for u in User.query.all()]
 	if newExpenseForm.validate_on_submit():			
-		print(f"CHARLIE: Date {newExpenseForm.date.data}")
-		print(f"CHARLIE: Category {newExpenseForm.expenseCategory.data}")
-		print(f"CHARLIE: Spender {newExpenseForm.spender.data}")
-		print(f"CHARLIE: Amount {newExpenseForm.amount.data}")
-		print(f"CHARLIE: Description {newExpenseForm.description.data}")
 		formattedAmount = "{:.2f}".format(newExpenseForm.amount.data)
 		expense = Expense(date=newExpenseForm.date.data, categoryId=newExpenseForm.expenseCategory.data,
 						spenderId=newExpenseForm.spender.data, amount=newExpenseForm.amount.data, description=newExpenseForm.description.data)
@@ -24,14 +50,7 @@ def home():
 		db.session.commit()
 		flash(f"Created a new expense record", "info")
 		return redirect(url_for('home'))
-	return render_template('index.html', newExpenseForm=newExpenseForm)
-    
-@app.route("/showData/")
-def showData():
-	expenses = Expense.query.order_by(Expense.date.desc()).all()
-	display = displayData.DisplayData(expenses)
-	myHtml = display.getPage()
-	return render_template('data.html', myHtml=myHtml)    
+	return render_template('index.html', newExpenseForm=newExpenseForm)   
     
 @app.route("/configure", methods=["GET","POST"])
 def configure():

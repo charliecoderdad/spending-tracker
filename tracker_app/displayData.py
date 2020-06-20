@@ -8,7 +8,6 @@ class DisplayData():
 	def getPage(self):
 		html = self.getExpenseStats(self.expenses)
 		html += self.getExpenseTable(self.expenses)
-		print(f"HTML {html}")
 		return Markup(html)
 
 	def getExpenseStats(self, expenses):

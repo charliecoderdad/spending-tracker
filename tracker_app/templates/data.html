@@ -2,14 +2,23 @@
 {% set activePage = "showData" %}
 
 {% block content %}
-<h1 class="text-primary">Expenses</h1>
+<h1 class="text-primary">Expenses - {{ monthStr }}</h1>
+
+<div class="row" id="expense-config">	
+	<div class="col-sm border rounded my-3 py-3">
+		<form method="POST" action={{ url_for('showData') }}>
+			{{ expenseConfigForm.csrf_token }}
+			{{ expenseConfigForm.year.label }} {{ expenseConfigForm.year }}
+			{{ expenseConfigForm.month.label }} {{ expenseConfigForm.month }}
+			<br>
+			{{ expenseConfigForm.submit }}
+		</form>
+	</div>
+</div>
 
 <div class="row" id="list-expense">	
-	
-	<div class="col-sm border rounded">		
-		
+	<div class="col-sm my-3 py-3">		
 		{{ myHtml }}
-		
 	</div>		
 </div>
 {% endblock %}
