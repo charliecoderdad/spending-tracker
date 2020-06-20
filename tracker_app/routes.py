@@ -18,7 +18,6 @@ def home():
 		print(f"CHARLIE: Amount {newExpenseForm.amount.data}")
 		print(f"CHARLIE: Description {newExpenseForm.description.data}")
 		formattedAmount = "{:.2f}".format(newExpenseForm.amount.data)
-		print(f"Charlie: Formatted amount {formattedAmount}")
 		expense = Expense(date=newExpenseForm.date.data, categoryId=newExpenseForm.expenseCategory.data,
 						spenderId=newExpenseForm.spender.data, amount=newExpenseForm.amount.data, description=newExpenseForm.description.data)
 		db.session.add(expense)
@@ -26,6 +25,13 @@ def home():
 		flash(f"Created a new expense record", "info")
 		return redirect(url_for('home'))
 	return render_template('index.html', newExpenseForm=newExpenseForm)
+    
+@app.route("/showData/")
+def showData():
+	expenses = Expense.query.order_by(Expense.date.desc()).all()
+	display = displayData.DisplayData(expenses)
+	myHtml = display.getPage()
+	return render_template('data.html', myHtml=myHtml)    
     
 @app.route("/configure", methods=["GET","POST"])
 def configure():
@@ -68,8 +74,3 @@ def deleteExpense(expenseId):
 	db.session.commit()
 	flash(f"Expense has been successfully removed", "success")
 	return redirect(url_for('showData'))
-	
-@app.route("/showData")
-def showData():
-	expenseTable = displayData.getExpenseTable(Expense=Expense, Category=Category, User=User)
-	return render_template('data.html', expenseTable=expenseTable)
