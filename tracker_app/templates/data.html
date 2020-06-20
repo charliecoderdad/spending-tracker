@@ -6,15 +6,9 @@
 
 <div class="row" id="list-expense">	
 	
-	<div class="col-sm border rounded">
-		{% for expense in expenses %}
-			Date: {{ expense.date }}<br>
-			Category: {{ Category.query.filter_by(categoryId = expense.categoryId).first().expenseCategory }}<br>
-			Spender: {{ User.query.filter_by(userId = expense.spenderId).first().username }}<br>
-			Amount: {{ expense.amount }}<br>
-			Description: {{ expense.description }}<br>
-			<br>
-		{% endfor %}
+	<div class="col-sm border rounded">		
+		
+		{{ expenseTable }}
 		
 	</div>		
 </div>

@@ -1,6 +1,6 @@
 from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
-from tracker_app import forms
+from tracker_app import forms, displayData
 from tracker_app.models import User, Category, Expense
 from datetime import date
 
@@ -62,4 +62,5 @@ def deleteUser(userid):
 	
 @app.route("/showData")
 def showData():
-    return render_template('data.html', expenses=Expense.query.all(), User=User, Category=Category)
+	expenseTable = displayData.getExpenseTable(Expense=Expense, Category=Category, User=User)
+	return render_template('data.html', expenseTable=expenseTable)
