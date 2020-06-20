@@ -17,6 +17,8 @@ def home():
 		print(f"CHARLIE: Spender {newExpenseForm.spender.data}")
 		print(f"CHARLIE: Amount {newExpenseForm.amount.data}")
 		print(f"CHARLIE: Description {newExpenseForm.description.data}")
+		formattedAmount = "{:.2f}".format(newExpenseForm.amount.data)
+		print(f"Charlie: Formatted amount {formattedAmount}")
 		expense = Expense(date=newExpenseForm.date.data, categoryId=newExpenseForm.expenseCategory.data,
 						spenderId=newExpenseForm.spender.data, amount=newExpenseForm.amount.data, description=newExpenseForm.description.data)
 		db.session.add(expense)
@@ -41,8 +43,8 @@ def configure():
 		db.session.commit()
 		flash(f"User '{cat.expenseCategory}' has been successfully added", "success")
 		return redirect(url_for('configure'))
-	return render_template('configure.html', users=User.query.all(), newUserForm=newUserForm,
-				newCategoryForm=newCategoryForm, categories=Category.query.all())
+	return render_template('configure.html', users=User.query.order_by(User.username).all(), newUserForm=newUserForm,
+				newCategoryForm=newCategoryForm, categories=Category.query.order_by(Category.expenseCategory).all())
 
 @app.route("/deleteCategory/<categoryId>", methods=["GET","POST"])
 def deleteCategory(categoryId):
@@ -52,13 +54,20 @@ def deleteCategory(categoryId):
 	flash(f"Category '{deletedCategory}' has been successfully removed", "success")
 	return redirect(url_for('configure'))
 	
-@app.route("/deleteUser/<userid>", methods=["GET","POST"])
-def deleteUser(userid):
-	deletedUser = User.query.filter(User.userId == userid).first().username
-	User.query.filter(User.userId == userid).delete()
+@app.route("/deleteUser/<userId>", methods=["GET","POST"])
+def deleteUser(userId):
+	deletedUser = User.query.filter(User.userId == userId).first().username
+	User.query.filter(User.userId == userId).delete()
 	db.session.commit()
 	flash(f"User '{deletedUser}' has been successfully removed", "success")
 	return redirect(url_for('configure'))
+	
+@app.route("/deleteExpense/<expenseId>", methods=["GET","POST"])
+def deleteExpense(expenseId):
+	Expense.query.filter(Expense.expenseId == expenseId).delete()
+	db.session.commit()
+	flash(f"Expense has been successfully removed", "success")
+	return redirect(url_for('showData'))
 	
 @app.route("/showData")
 def showData():

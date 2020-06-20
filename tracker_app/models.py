@@ -6,7 +6,7 @@ class Expense(db.Model):
 	date = db.Column(db.DateTime, nullable=False)
 	categoryId = db.Column(db.Integer, db.ForeignKey('category.categoryId'), nullable=False)
 	spenderId = db.Column(db.Integer, db.ForeignKey('user.userId'), nullable=False)
-	amount = db.Column(db.Numeric(precision=2), nullable=False)
+	amount = db.Column(db.Numeric(precision=2, asdecimal=True), nullable=False)
 	description = db.Column(db.Text)
 
 	def __repr__(self):

@@ -1,8 +1,10 @@
-from flask import Markup
+from flask import Markup, url_for
+import datetime
 
 def getExpenseTable(Expense, Category, User):		
 	expenses = Expense.query.all()
 	print(expenses)
+	
 	tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description']
 	
 	table = "<table border=1>"	
@@ -13,14 +15,15 @@ def getExpenseTable(Expense, Category, User):
 	table += "</tr></thead>"
 	
 	for expense in expenses:
-		print(f"Leggo {expense.amount}")
+		formattedDate = expense.date.strftime("%B %d, %Y")
+		print(f"Charlie: Type: {type(expense.date)}")
 		table += "<tr>"
-		table += "<td>" + str(expense.date) + "</td>"
+		table += "<td>" + str(formattedDate) + "</td>"
 		table += "<td>" + expense.spender.username + "</td>"
 		table += "<td>" + expense.myCategory.expenseCategory + "</td>"
-		table += "<td>" + str(expense.amount) + "</td>"
+		table += "<td>$" + str("{:.2f}".format(expense.amount)) + "</td>"
 		table += "<td>" + expense.description + "</td>"
-		table += "</tr>"
+		table += "<td>(<a href=deleteExpense/" + str(expense.expenseId) + ">Delete</a>)</td>"
 	
 	table += "</table>"
 		

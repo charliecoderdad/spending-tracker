@@ -17,7 +17,7 @@
 	</div>	
 	<div class="col-sm">
 		<h2>Expense Categories</h2>	
-		<ul>	
+		<ul>
 			{% for cat in categories %}
 				<li>{{ cat.expenseCategory }}
 					{% if cat.discretionary %}[discretionary]{% endif %}
@@ -41,7 +41,7 @@
 		<h2>Spenders</h2>	
 		<ul>	
 			{% for user in users %}
-				<li>{{ user.username }} (<a href={{ url_for('deleteUser', userid=user.userId) }}>Delete</a>)</li>
+				<li>{{ user.username }} (<a href={{ url_for('deleteUser', userId=user.userId) }}>Delete</a>)</li>
 			{% endfor %}
 		</ul>
 	</div>
