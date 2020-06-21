@@ -27,7 +27,7 @@
 		</div>
 		<!-- END: Build out site nav -->
 
-		<div class="row my-3"><div class="col-md-8">
+		<div class="row" id="flash-messages-row"><div class="col-md-8 py-3">
 			<!-- This is for flash messages -->
 			{% with messages = get_flashed_messages(with_categories=true) %}
 				{% if messages %}

@@ -9,13 +9,10 @@ import datetime
 @app.route("/showData/", methods=["GET", "POST"])
 @app.route("/showData/<year>/<month>", methods=["GET", "POST"])
 def showData(year='none', month='none'):
-	expenseConfigForm = forms.ExpenseConfigureForm()
-	if expenseConfigForm.validate_on_submit():
-		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
 	print(f"Year: {year}")
 	print(f"Is string instance: {isinstance(year, str)}")
-	if isinstance(year, str) == True:
+	if (year == "none" or year =="deleteExpense"):
 		year = datetime.datetime.today().year
 		month = datetime.datetime.today().month
 
@@ -23,16 +20,28 @@ def showData(year='none', month='none'):
 	start_date = datetime.date(int(year), int(month), 1)
 	end_date = datetime.date(int(year), int(month), num_days)
 	
+	print(f"Start: {start_date}")
+	
 	expenses = Expense.query.filter(and_(
 						Expense.date >= start_date,
 						Expense.date <= end_date
 					)).order_by(Expense.date.desc())				
 				
+	# Get the dynamice HTML content for the page
 	display = displayData.DisplayData(expenses)
-	myHtml = display.getPage()
+	#myHtml = display.getPage()
+	expenseTable = display.getExpenseTable()
+	analyzeTable = display.getAnalyzeTable()
+	stats = display.getExpenseStats()
 	monthStr = start_date.strftime("%B, %Y")	
+
+	expenseConfigForm = forms.ExpenseConfigureForm()
+	if expenseConfigForm.validate_on_submit():
+		print("Got here")
+		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
-	return render_template('data.html', myHtml=myHtml, monthStr=monthStr, expenseConfigForm=expenseConfigForm)
+	return render_template('data.html', analyzeTable=analyzeTable, expenseTable=expenseTable, stats=stats, 
+		monthStr=monthStr, expenseConfigForm=expenseConfigForm)
 
 @app.route("/", methods=["GET","POST"])
 def home():

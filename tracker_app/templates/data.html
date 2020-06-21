@@ -5,7 +5,7 @@
 <h1 class="text-primary">Expenses - {{ monthStr }}</h1>
 
 <div class="row" id="expense-config">	
-	<div class="col-sm border rounded my-3 py-3">
+	<div class="col-sm border rounded py-3">
 		<form method="POST" action={{ url_for('showData') }}>
 			{{ expenseConfigForm.csrf_token }}
 			{{ expenseConfigForm.year.label }} {{ expenseConfigForm.year }}
@@ -16,9 +16,18 @@
 	</div>
 </div>
 
-<div class="row" id="list-expense">	
-	<div class="col-sm my-3 py-3">		
-		{{ myHtml }}
-	</div>		
+<div class="row" id="expenses-stats">	
+	<div class="col-sm py-3">
+		{{ stats }}	
+	</div>	
+</div>
+
+<div class="row" id="expenses-table">	
+	<div class="col-md py-3">
+		{{ expenseTable }}	
+	</div>	
+	<div class="col-sm py-3">
+		{{ analyzeTable }}
+	</div>
 </div>
 {% endblock %}
