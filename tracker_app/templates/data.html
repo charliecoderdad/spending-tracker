@@ -4,30 +4,31 @@
 {% block content %}
 <h1 class="text-primary">Expenses - {{ monthStr }}</h1>
 
-<div class="row" id="expense-config">	
-	<div class="col-sm border rounded py-3">
+<div class="row border rounded py-2" id="expense-config">	
+	<div class="col-sm">
 		<form method="POST" action={{ url_for('showData') }}>
 			{{ expenseConfigForm.csrf_token }}
 			{{ expenseConfigForm.year.label }} {{ expenseConfigForm.year }}
-			{{ expenseConfigForm.month.label }} {{ expenseConfigForm.month }}
-			<br>
+			{{ expenseConfigForm.month.label }} {{ expenseConfigForm.month }}			
 			{{ expenseConfigForm.submit }}
 		</form>
 	</div>
 </div>
 
-<div class="row" id="expenses-stats">	
-	<div class="col-sm py-3">
-		{{ stats }}	
-	</div>	
-</div>
+<div class="row border rounded my-3 px-3 py-2">
+	<div class="row" id="expenses-stats">	
+		<div class="col-sm py-3">
+			{{ stats }}	
+		</div>	
+	</div>
 
-<div class="row" id="expenses-table">	
-	<div class="col-md py-3">
-		{{ expenseTable }}	
-	</div>	
-	<div class="col-sm py-3">
-		{{ analyzeTable }}
+	<div class="row" id="expenses-table">	
+		<div class="col-7 py-3">
+			{{ expenseTable }}	
+		</div>	
+		<div class="col-5 py-3">
+			{{ analyzeTable }}
+		</div>
 	</div>
 </div>
 {% endblock %}

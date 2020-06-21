@@ -15,7 +15,7 @@ class ExpenseConfigureForm(FlaskForm):
 					
 	year = SelectField('Year', choices=yearChoices, validate_choice=False)
 	month = SelectField('Month', choices=monthChoices, validate_choice=False)
-	submit = SubmitField('Show Expenses')
+	submit = SubmitField('Change Month')
 
 class NewExpenseForm(FlaskForm):
 	# Get list of categories for category pull down		

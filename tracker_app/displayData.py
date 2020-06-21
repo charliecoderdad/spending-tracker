@@ -24,8 +24,9 @@ class DisplayData():
 			catDict[cat]["percent"] = catDict[cat]["total"] / total * 100
 			
 		
-		tableHeaders = ['Category', 'Total', 'Percent']			
-		table = "<table border=1>"
+		tableHeaders = ['Category', 'Total', 'Percent']
+		table = "Analysis"
+		table += "<table border=1>"
 		table += "<thead><tr>"
 		for item in tableHeaders:
 			table += "<th>" + item + "</th>"
@@ -60,7 +61,7 @@ class DisplayData():
 	def getExpenseTable(self):	
 		expenses = self.expenses
 		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description']			
-		table = str(expenses.count()) + " records"
+		table = "Expenses - " + str(expenses.count()) + " records"
 		table += "<table border=1>"
 		table += "<thead><tr>"
 		for item in tableHeaders:
