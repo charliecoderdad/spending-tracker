@@ -2,11 +2,17 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, DecimalField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, NumberRange
-from tracker_app.models import Category, User
+from tracker_app.models import Category, User, Expense
 from datetime import date
 
 class ExpenseConfigureForm(FlaskForm):
-	yearChoices = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+	# Build the list of available years based on records in database
+	records = Expense.query.with_entities(Expense.date).all()
+	yearChoices = []
+	for record in records:
+		if int(record.date.year) not in yearChoices:
+			yearChoices.append(record.date.year)
+			
 	monthChoices = [(1,'January'), (2,'February'), (3,'March'), (4,'April'), (5,'May'), (6,'June'),
 					(7, 'July'), (8,'August'), (9,'September'), (10,'October'), (11,'November'), (12,'December')]
 	year = SelectField('Year', choices=yearChoices, validate_choice=False)

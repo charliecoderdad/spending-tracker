@@ -11,9 +11,6 @@ import datetime
 def showData(year='none', month='none'):
 	expenseConfigForm = forms.ExpenseConfigureForm()
 	if expenseConfigForm.validate_on_submit():
-		print("YO dawg I got here son")
-		print(f"Year: {expenseConfigForm.year.data}")
-		print(f"Month: {expenseConfigForm.month.data}")
 		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
 	if year == "none":
