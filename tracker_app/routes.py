@@ -1,7 +1,7 @@
 from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
 from tracker_app import forms, displayData
-from tracker_app.models import User, Category, Expense
+from tracker_app.models import User, Category, Expense, Metadata
 from sqlalchemy import and_
 import calendar
 import datetime
@@ -13,10 +13,12 @@ def showData(year='none', month='none'):
 	if expenseConfigForm.validate_on_submit():
 		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
-	if year == "none":
+	print(f"Year: {year}")
+	print(f"Is string instance: {isinstance(year, str)}")
+	if isinstance(year, str) == True:
 		year = datetime.datetime.today().year
 		month = datetime.datetime.today().month
-		
+
 	num_days = calendar.monthrange(int(year), int(month))[1]
 	start_date = datetime.date(int(year), int(month), 1)
 	end_date = datetime.date(int(year), int(month), num_days)
@@ -39,12 +41,22 @@ def home():
 	sortedCategoriesList.sort(key = lambda x: x[1])
 	newExpenseForm.expenseCategory.choices = sortedCategoriesList
 	newExpenseForm.spender.choices = [(u.userId, u.username) for u in User.query.all()]
-	if newExpenseForm.validate_on_submit():			
+	if newExpenseForm.validate_on_submit():
+		# add expense record to database
 		formattedAmount = "{:.2f}".format(newExpenseForm.amount.data)
 		expense = Expense(date=newExpenseForm.date.data, categoryId=newExpenseForm.expenseCategory.data,
 						spenderId=newExpenseForm.spender.data, amount=newExpenseForm.amount.data, description=newExpenseForm.description.data)
 		db.session.add(expense)
 		db.session.commit()
+		# add metadata about expense to database
+		if (bool(Metadata.query.filter(and_(Metadata.year == int(newExpenseForm.date.data.year), Metadata.monthNum == int(newExpenseForm.date.data.month))).first()) == False):
+			print("Did not find a metadata so I'm adding one")
+			md = Metadata(year=expense.date.year, monthNum=expense.date.month, monthStr=expense.date.strftime('%B'))
+			db.session.add(md)
+			db.session.commit()
+		else:
+			print("Already found a metadata you chuckle head!!!")
+			
 		flash(f"Created a new expense record", "info")
 		return redirect(url_for('home'))
 	return render_template('index.html', newExpenseForm=newExpenseForm)   

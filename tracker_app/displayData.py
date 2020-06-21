@@ -11,13 +11,14 @@ class DisplayData():
 		return Markup(html)
 
 	def getExpenseStats(self, expenses):
-		stats = "Placeholder"
+		stats = "Placeholder<br>"
 		return stats
 
-	def getExpenseTable(self, expenses):
-		
-		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description']	
-		table = "<table border=1>"
+	def getExpenseTable(self, expenses):	
+				
+		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description']			
+		table = str(expenses.count()) + " records"
+		table += "<table border=1>"
 		table += "<thead><tr>"
 		for item in tableHeaders:
 			table += "<th>" + item + "</th>"
@@ -30,7 +31,8 @@ class DisplayData():
 			table += "<td>" + expense.myCategory.expenseCategory + "</td>"
 			table += "<td>$" + str("{:.2f}".format(expense.amount)) + "</td>"
 			table += "<td>" + expense.description + "</td>"
-			table += "<td>(<a href=deleteExpense/" + str(expense.expenseId) + ">Delete</a>)</td>"	
+			#table += "<td>(<a href=deleteExpense/" + str(expense.expenseId) + ">Delete</a>)</td>"	
+			table += "<td>(<a href= " + url_for('deleteExpense', expenseId=expense.expenseId) + ">Delete</a>)</td>"	
 		table += "</table>"
 		
 		return table

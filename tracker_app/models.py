@@ -1,6 +1,14 @@
 from datetime import datetime
 from tracker_app import db
 
+class Metadata(db.Model):
+	metadataId = db.Column(db.Integer, primary_key=True)
+	year = db.Column(db.Integer, nullable=False)
+	monthNum = db.Column(db.Integer, nullable=False)
+	monthStr = db.Column(db.Text, nullable=False)
+	def __repr__(self):
+		return f"Metadata('{self.year}', '{self.monthNum}', '{self.monthStr}')"
+
 class Expense(db.Model):
 	expenseId = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.DateTime, nullable=False)
