@@ -3,23 +3,20 @@
 
 <head>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-<meta charset="utf-8" />
-<title>Charlie Site</title>
-<meta name="generator" content="Geany 1.33" />
+<title>Spending Tracker</title>
 </head>
 
 <body>	
 	<div class="container">		
 		
-		<!-- Build out site nav -->
-		{% set navigation_bar = [
-			('home', 'Home'),
-			('configure', 'Configure'),
-			('showData', 'Data')			
-		] %}
-		
+		<!-- Build out site nav -->						
 		<div class="row my-3" id="sitenav">
 			<nav class="nav nav-pills nav-fill">
+				{% set navigation_bar = [
+					('home', 'Home'),
+					('configure', 'Configure'),
+					('showData', 'Data')			
+				] %}
 				{% for id, text in navigation_bar %}
 					<a class="nav-item nav-link {% if id == activePage %} active{% endif %}" href="{{ url_for(id) }}">{{ text }}</a>
 				{% endfor %}
@@ -27,22 +24,23 @@
 		</div>
 		<!-- END: Build out site nav -->
 
-		<div class="row" id="flash-messages-row"><div class="col-md-8 py-3">
-			<!-- This is for flash messages -->
-			{% with messages = get_flashed_messages(with_categories=true) %}
-				{% if messages %}
-					{% for category, message in messages %}
-						<div class="alert alert-{{ category }}">
-							{{ message }}
-						</div>
-					{% endfor %}
-				{% endif %}
-			{% endwith %}
-			<!-- end of flash messages section -->		
-		</div></div>
+		<!-- This is for flash messages -->
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			<div class="row" id="flash-messages-row"><div class="col-lg-8">				
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">
+						{{ message }}
+					</div>
+				{% endfor %}				
+			
+			</div></div>
+		{% endif %}
+		{% endwith %}
+		<!-- end of flash messages section -->		
 				
 		<div class="row" id="content">
-			<div class="col-sm">
+			<div class="col-lg">
 				{% block content %}{% endblock %}
 			</div>			
 		</div>	

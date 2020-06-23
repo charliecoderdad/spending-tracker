@@ -3,39 +3,27 @@ from flask import render_template, url_for, flash, redirect
 from tracker_app import forms, displayData
 from tracker_app.models import User, Category, Expense, Metadata
 from sqlalchemy import and_
-import calendar
-import datetime
+import datetime, calendar
 
 @app.route("/showData/", methods=["GET", "POST"])
 @app.route("/showData/<year>/<month>", methods=["GET", "POST"])
 def showData(year='none', month='none'):
 		
-	print(f"Year: {year}")
-	print(f"Is string instance: {isinstance(year, str)}")
 	if (year == "none" or year =="deleteExpense"):
 		year = datetime.datetime.today().year
 		month = datetime.datetime.today().month
 
-	num_days = calendar.monthrange(int(year), int(month))[1]
-	start_date = datetime.date(int(year), int(month), 1)
-	end_date = datetime.date(int(year), int(month), num_days)
-	
-	print(f"Start: {start_date}")
-	
-	expenses = Expense.query.filter(and_(
-						Expense.date >= start_date,
-						Expense.date <= end_date
-					)).order_by(Expense.date.desc())				
-				
 	# Get the dynamice HTML content for the page
-	display = displayData.DisplayData(expenses)
+	display = displayData.DisplayData(year, month)
 	#myHtml = display.getPage()
 	expenseTable = display.getExpenseTable()
 	analyzeTable = display.getAnalyzeTable()
 	stats = display.getExpenseStats()
-	monthStr = start_date.strftime("%B, %Y")	
+	#monthStr = display.start_date.strftime("%B, %Y")	
+	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
 
 	expenseConfigForm = forms.ExpenseConfigureForm()
+	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]	
 	if expenseConfigForm.validate_on_submit():
 		print("Got here")
 		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))

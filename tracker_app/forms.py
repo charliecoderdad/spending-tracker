@@ -4,6 +4,7 @@ from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, NumberRange
 from tracker_app.models import Category, User, Expense, Metadata
 from datetime import date
+import datetime
 
 class ExpenseConfigureForm(FlaskForm):
 	# Build the list of available years based on records in database
@@ -14,7 +15,7 @@ class ExpenseConfigureForm(FlaskForm):
 		(7, 'July'), (8,'August'), (9,'September'), (10,'October'), (11,'November'), (12,'December')]
 					
 	year = SelectField('Year', choices=yearChoices, validate_choice=False)
-	month = SelectField('Month', choices=monthChoices, validate_choice=False)
+	month = SelectField('Month', choices=monthChoices, validate_choice=False, default=datetime.datetime.today().month)
 	submit = SubmitField('Change Month')
 
 class NewExpenseForm(FlaskForm):

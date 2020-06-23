@@ -6,7 +6,7 @@
 
 <div class="row border rounded py-3" id="expenses-config">	
 	
-	<div class="col-sm">
+	<div class="col-lg">
 		<h2>Create Expense Category</h2>
 		<form method="POST" action={{ url_for('configure') }}>
 			{{ newCategoryForm.csrf_token }}
@@ -15,7 +15,7 @@
 			{{ newCategoryForm.submit }}		
 		</form>
 	</div>	
-	<div class="col-sm">
+	<div class="col-lg">
 		<h2>Expense Categories</h2>	
 		<ul>
 			{% for cat in categories %}

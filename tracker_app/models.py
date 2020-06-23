@@ -7,7 +7,7 @@ class Metadata(db.Model):
 	monthNum = db.Column(db.Integer, nullable=False)
 	monthStr = db.Column(db.Text, nullable=False)
 	def __repr__(self):
-		return f"Metadata('{self.year}', '{self.monthNum}', '{self.monthStr}')"
+		return f"Metadata('{self.metadataId}', '{self.year}', '{self.monthNum}', '{self.monthStr}')"
 
 class Expense(db.Model):
 	expenseId = db.Column(db.Integer, primary_key=True)
