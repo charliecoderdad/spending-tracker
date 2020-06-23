@@ -1,48 +1,54 @@
 from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
-from tracker_app import forms, displayData, analyzeData
+from tracker_app import forms, monthInfo, yearInfo, categoryTable
 from tracker_app.models import User, Category, Expense, Metadata
 from sqlalchemy import and_
 import datetime, calendar
 
 @app.route("/analysis/", methods=["GET", "POST"])
 @app.route("/analysis/<year>", methods=["GET", "POST"])
-def yearlyAnalysis(year='none', month='none'):
+def yearlyAnalysis(year='none'):
 	if (year == "none"):
 		year = datetime.datetime.today().year
 		
 	analysisForm = forms.YearlyAnalysisConfigureForm()
 	analysisForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
 	
-	analyze = analyzeData.AnalyzeData(year)
-	stats = analyze.getAnalysisStats()
-	categoryAnalysisTable = analyze.getCategoryAnalysisTable()
+	catTable = categoryTable.CategoryTable(year)
+	categoryAnalysisTable = catTable.getCategoryAnalysisTable()
+	
+	analysis = yearInfo.YearInfo(year)
+	stats = analysis.getYearlyStats()
+	
+	if analysisForm.validate_on_submit():
+		return redirect(url_for('yearlyAnalysis', year=analysisForm.year.data))
+	
 	return render_template('yearlyAnalysis.html', analysisForm=analysisForm, stats=stats, yearStr=year,
 			categoryAnalysisTable=categoryAnalysisTable)
 
-@app.route("/showData/", methods=["GET", "POST"])
-@app.route("/showData/<year>/<month>", methods=["GET", "POST"])
-def showData(year='none', month='none'):
+@app.route("/monthlyAnalysis/", methods=["GET", "POST"])
+@app.route("/monthlyAnalysis/<year>/<month>", methods=["GET", "POST"])
+def monthlyAnalysis(year='none', month='none'):
 		
 	if (year == "none" or year =="deleteExpense"):
 		year = datetime.datetime.today().year
 		month = datetime.datetime.today().month
 
-	# Get the dynamice HTML content for the page
-	display = displayData.DisplayData(year, month)
-	#myHtml = display.getPage()
-	expenseTable = display.getExpenseTable()
-	analyzeTable = display.getAnalyzeTable()
-	stats = display.getExpenseStats()
-	#monthStr = display.start_date.strftime("%B, %Y")	
+	analysis = monthInfo.MonthInfo(year, month)
+	
+	catTable = categoryTable.CategoryTable(year, month)
+	categoryAnalysisTable = catTable.getCategoryAnalysisTable()
+	
+	expenseTable = analysis.getExpenseTable()
+	stats = analysis.getMonthlyExpenseStats()
 	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
 
 	expenseConfigForm = forms.ExpenseConfigureForm()
 	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
 	if expenseConfigForm.validate_on_submit():
-		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
+		return redirect(url_for('monthlyAnalysis', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
-	return render_template('monthlyData.html', analyzeTable=analyzeTable, expenseTable=expenseTable, stats=stats, 
+	return render_template('monthlyData.html', categoryAnalysisTable=categoryAnalysisTable, expenseTable=expenseTable, stats=stats, 
 		monthStr=monthStr, expenseConfigForm=expenseConfigForm)
 
 @app.route("/", methods=["GET","POST"])
@@ -112,4 +118,4 @@ def deleteExpense(expenseId):
 	Expense.query.filter(Expense.expenseId == expenseId).delete()
 	db.session.commit()
 	flash(f"Expense has been successfully removed", "success")
-	return redirect(url_for('showData'))
+	return redirect(url_for('monthlyAnalysis'))

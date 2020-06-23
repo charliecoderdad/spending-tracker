@@ -5,7 +5,7 @@ from sqlalchemy import and_
 import calendar, datetime
 from collections import OrderedDict
 
-class DisplayData():
+class MonthInfo():
 	def __init__(self, year, month):
 		self.year = year
 		self.month = month
@@ -19,7 +19,7 @@ class DisplayData():
 					)).order_by(Expense.date.desc())
 		self.isCurrentMonth = bool(int(year) == datetime.datetime.today().year and int(month) == datetime.datetime.today().month)
 		
-	def getExpenseStats(self):
+	def getMonthlyExpenseStats(self):
 		expenses = self.expenses
 		total = 0
 		discretionarySpending = 0
@@ -43,43 +43,6 @@ class DisplayData():
 		if (self.isCurrentMonth):
 			stats += "<br><br>Projected final spending: $" + str("{:.2f}".format(dailyAvg * self.num_days))
 		return Markup(stats)		
-		
-	def getAnalyzeTable(self):
-		expenses = self.expenses
-		
-		# Generate categories dict
-		catDict = {}
-		total = 0
-		for e in expenses:
-			total += e.amount
-			if e.myCategory.expenseCategory not in catDict:
-				catDict[e.myCategory.expenseCategory] = {}
-				catDict[e.myCategory.expenseCategory]["total"] = e.amount
-				catDict[e.myCategory.expenseCategory]["percent"] = 0
-			else:
-				catDict[e.myCategory.expenseCategory]["total"] += e.amount
-		#calc percent in categories dict
-		for cat in catDict:
-			catDict[cat]["percent"] = catDict[cat]["total"] / total * 100
-			
-		# Sort by percentage
-		catDict = OrderedDict(sorted(catDict.items(), key = lambda x: (int(x[1]['percent'])), reverse=True))
-		
-		tableHeaders = ['Category', 'Total', 'Percent']
-		table = "Analysis"
-		table += "<table border=1>"
-		table += "<thead><tr>"
-		for item in tableHeaders:
-			table += "<th>" + item + "</th>"
-		table += "</tr></thead>"	
-		for cat in catDict:
-			table += "<tr>"
-			table += "<td>" + cat + "</td>"
-			table += "<td>$" + str("{:.2f}".format(catDict[cat]['total'])) + "</td>"
-			table += "<td>" + str("{:.2f}".format(catDict[cat]['percent'])) + "%</td>"
-		table += "</table>"
-		
-		return Markup(table)
 
 	def getExpenseTable(self):	
 		expenses = self.expenses

@@ -1,12 +1,12 @@
 {% extends 'layout.html' %}
-{% set activePage = "showData" %}
+{% set activePage = "monthlyAnalysis" %}
 
 {% block content %}
 <h1 class="text-primary">Expenses - {{ monthStr }}</h1>
 
 <div class="row border rounded py-2" id="expense-config-form">
 	<div class="col-lg">
-		<form method="POST" action={{ url_for('showData') }}>
+		<form method="POST" action={{ url_for('monthlyAnalysis') }}>
 			{{ expenseConfigForm.csrf_token }}
 			{{ expenseConfigForm.year.label }} {{ expenseConfigForm.year }}
 			{{ expenseConfigForm.month.label }} {{ expenseConfigForm.month }}			
@@ -27,7 +27,7 @@
 			{{ expenseTable }}	
 		</div>	
 		<div class="col-lg-4 py-3">
-			{{ analyzeTable }}
+			{{ categoryAnalysisTable }}
 		</div>
 	</div>
 </div>
