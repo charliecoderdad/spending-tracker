@@ -3,6 +3,7 @@ from tracker_app.models import Expense
 import datetime
 from sqlalchemy import and_
 import calendar, datetime
+from collections import OrderedDict
 
 class DisplayData():
 	def __init__(self, year, month):
@@ -61,6 +62,8 @@ class DisplayData():
 		for cat in catDict:
 			catDict[cat]["percent"] = catDict[cat]["total"] / total * 100
 			
+		# Sort by percentage
+		catDict = OrderedDict(sorted(catDict.items(), key = lambda x: (int(x[1]['percent'])), reverse=True))
 		
 		tableHeaders = ['Category', 'Total', 'Percent']
 		table = "Analysis"

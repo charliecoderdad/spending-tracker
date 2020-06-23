@@ -4,7 +4,7 @@ import datetime
 from sqlalchemy import and_, func, extract
 import calendar, datetime
 from tracker_app import db
-#from tracker_app.models import Expense
+from collections import OrderedDict
 
 
 class AnalyzeData():
@@ -13,7 +13,44 @@ class AnalyzeData():
 		self.isCurrentYear = bool(int(year) == datetime.datetime.today().year)
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
-		self.num_days = (self.endDate - self.startDate).days
+		self.num_days = (self.endDate - self.startDate).days		
+		
+	def getCategoryAnalysisTable(self):
+		expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()
+		
+		# Generate categories dict
+		catDict = {}
+		total = 0
+		for e in expenses:
+			total += e.amount
+			if e.myCategory.expenseCategory not in catDict:
+				catDict[e.myCategory.expenseCategory] = {}
+				catDict[e.myCategory.expenseCategory]["total"] = e.amount
+				catDict[e.myCategory.expenseCategory]["percent"] = 0
+			else:
+				catDict[e.myCategory.expenseCategory]["total"] += e.amount
+		#calc percent in categories dict
+		for cat in catDict:
+			catDict[cat]["percent"] = catDict[cat]["total"] / total * 100
+			
+		# TODO: Sort the catDic by total		
+		catDict = OrderedDict(sorted(catDict.items(), key = lambda x: (int(x[1]['percent'])), reverse=True))
+		
+		tableHeaders = ['Category', 'Total', 'Percent']
+		table = f"Categorical Analysis for {self.year}"
+		table += "<table border=1>"
+		table += "<thead><tr>"
+		for item in tableHeaders:
+			table += "<th>" + item + "</th>"
+		table += "</tr></thead>"	
+		for cat in catDict:
+			table += "<tr>"
+			table += "<td>" + str(cat) + "</td>"
+			table += "<td>$" + str("{:.2f}".format(catDict[cat]['total'])) + "</td>"
+			table += "<td>" + str("{:.2f}".format(catDict[cat]['percent'])) + "%</td>"
+		table += "</table>"
+		
+		return Markup(table)		
 		
 	def getAnalysisStats(self):
 		total = Expense.query.with_entities(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()		
@@ -60,44 +97,8 @@ class AnalyzeData():
 							Expense.date <= end_date
 						)).first().date.day
 			return datetime.date(self.year, int(month), int(day))
-			
-		
-	def getAnalyzeTable(self):
-		expenses = self.expenses
-		
-		# Generate categories dict
-		catDict = {}
-		total = 0
-		for e in expenses:
-			total += e.amount
-			if e.myCategory.expenseCategory not in catDict:
-				catDict[e.myCategory.expenseCategory] = {}
-				catDict[e.myCategory.expenseCategory]["total"] = e.amount
-				catDict[e.myCategory.expenseCategory]["percent"] = 0
-			else:
-				catDict[e.myCategory.expenseCategory]["total"] += e.amount
-		#calc percent in categories dict
-		for cat in catDict:
-			catDict[cat]["percent"] = catDict[cat]["total"] / total * 100
-			
-		
-		tableHeaders = ['Category', 'Total', 'Percent']
-		table = "Analysis"
-		table += "<table border=1>"
-		table += "<thead><tr>"
-		for item in tableHeaders:
-			table += "<th>" + item + "</th>"
-		table += "</tr></thead>"	
-		for cat in catDict:
-			table += "<tr>"
-			table += "<td>" + cat + "</td>"
-			table += "<td>$" + str("{:.2f}".format(catDict[cat]['total'])) + "</td>"
-			table += "<td>" + str("{:.2f}".format(catDict[cat]['percent'])) + "%</td>"
-		table += "</table>"
-		
-		return Markup(table)
 
-	def getExpenseTable(self):	
+	def getMonthlyAnalysisTable(self):	
 		expenses = self.expenses
 		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description']			
 		table = "Expenses - " + str(expenses.count()) + " records"

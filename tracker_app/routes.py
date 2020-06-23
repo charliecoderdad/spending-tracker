@@ -16,7 +16,9 @@ def yearlyAnalysis(year='none', month='none'):
 	
 	analyze = analyzeData.AnalyzeData(year)
 	stats = analyze.getAnalysisStats()
-	return render_template('yearlyAnalysis.html', analysisForm=analysisForm, stats=stats, yearStr=year)
+	categoryAnalysisTable = analyze.getCategoryAnalysisTable()
+	return render_template('yearlyAnalysis.html', analysisForm=analysisForm, stats=stats, yearStr=year,
+			categoryAnalysisTable=categoryAnalysisTable)
 
 @app.route("/showData/", methods=["GET", "POST"])
 @app.route("/showData/<year>/<month>", methods=["GET", "POST"])
