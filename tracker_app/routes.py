@@ -38,7 +38,6 @@ def showData(year='none', month='none'):
 	expenseConfigForm = forms.ExpenseConfigureForm()
 	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
 	if expenseConfigForm.validate_on_submit():
-		print("Got here")
 		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
 	return render_template('monthlyData.html', analyzeTable=analyzeTable, expenseTable=expenseTable, stats=stats, 

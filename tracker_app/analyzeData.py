@@ -3,6 +3,8 @@ from tracker_app.models import Expense, Metadata
 import datetime
 from sqlalchemy import and_, func, extract
 import calendar, datetime
+from tracker_app import db
+#from tracker_app.models import Expense
 
 
 class AnalyzeData():
@@ -12,6 +14,32 @@ class AnalyzeData():
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
 		self.num_days = (self.endDate - self.startDate).days
+		
+	def getAnalysisStats(self):
+		total = Expense.query.with_entities(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()		
+		expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()				
+		discTotal = 0
+		for expense in expenses:
+			if (expense.myCategory.discretionary):
+				discTotal += expense.amount
+		requiredTotal = total - discTotal				
+							
+		daysInyear = 366 if calendar.isleap(self.year) else 365
+		stats = "<b>Total Spent: $" + str("{:,.2f}".format(total) + "</b>")
+		stats += "<br>Total Discretionary Spending: $" + str("{:,.2f}".format(discTotal))
+		stats += "<br>Minimum Required spending: $" + str("{:.2f}".format(requiredTotal))
+		if (self.isCurrentYear):
+			dailyAvg = total / self.num_days
+			reqDailyAvg = requiredTotal / self.num_days
+		else:
+			dailyAvg = total / daysInyear
+			reqDailyAvg = requiredTotal / daysInyear
+		stats += "<br>Average daily spending: $" + str("{:,.2f}".format(dailyAvg))
+		
+		if (self.isCurrentYear):
+			stats += "<br><br><b>Projected yearly spending: $" + str("{:,.2f}".format(dailyAvg * daysInyear) + "</b>")
+			stats += "<br>Projected minimal spending: $" + str("{:,.2f}".format(reqDailyAvg * daysInyear) + "</b>")
+		return Markup(stats)		
 	
 	def getEndDate(self):
 		if (self.isCurrentYear == "False"):
@@ -33,22 +61,6 @@ class AnalyzeData():
 						)).first().date.day
 			return datetime.date(self.year, int(month), int(day))
 			
-	
-	def getAnalysisStats(self):
-		total = Expense.query.with_entities(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()
-		daysInyear = 366 if calendar.isleap(self.year) else 365
-		stats = "<b>Total Spent: $" + str("{:,.2f}".format(total) + "</b>")
-		#stats += "<br>Discretionary spending: $" + str("{:.2f}".format(discretionarySpending))
-		#stats += "<br>Required spending: $" + str("{:.2f}".format(requiredSpending))
-		if (self.isCurrentYear):
-			dailyAvg = total / self.num_days
-		else:
-			dailyAvg = total / daysInyear
-		stats += "<br>Average daily spending: $" + str("{:,.2f}".format(dailyAvg))
-		
-		if (self.isCurrentYear):
-			stats += "<br><br>Projected yearly spending: $" + str("{:,.2f}".format(dailyAvg * daysInyear))
-		return Markup(stats)		
 		
 	def getAnalyzeTable(self):
 		expenses = self.expenses
