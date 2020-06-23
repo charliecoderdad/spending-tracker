@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% set activePage = "yearlyAnalysis" %}
+
+{% block content %}
+<h1 class="text-primary">Analysis - {{ yearStr }}</h1>
+
+<div class="row border rounded py-2" id="analysis-config-form">
+	<div class="col-lg">
+		<form method="POST" action={{ url_for('yearlyAnalysis') }}>
+			{{ analysisForm.csrf_token }}
+			{{ analysisForm.year.label }} {{ analysisForm.year }}
+			{{ analysisForm.submit }}
+		</form>
+	</div>
+</div>
+
+<div class="row border rounded my-3 px-3 py-2">
+	<div class="col-lg py-3">
+		{{ stats }}	
+	</div>	
+</div>
+
+{% endblock %}

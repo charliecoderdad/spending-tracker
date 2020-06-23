@@ -1,9 +1,22 @@
 from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
-from tracker_app import forms, displayData
+from tracker_app import forms, displayData, analyzeData
 from tracker_app.models import User, Category, Expense, Metadata
 from sqlalchemy import and_
 import datetime, calendar
+
+@app.route("/analysis/", methods=["GET", "POST"])
+@app.route("/analysis/<year>", methods=["GET", "POST"])
+def yearlyAnalysis(year='none', month='none'):
+	if (year == "none"):
+		year = datetime.datetime.today().year
+		
+	analysisForm = forms.YearlyAnalysisConfigureForm()
+	analysisForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	
+	analyze = analyzeData.AnalyzeData(year)
+	stats = analyze.getAnalysisStats()
+	return render_template('yearlyAnalysis.html', analysisForm=analysisForm, stats=stats, yearStr=year)
 
 @app.route("/showData/", methods=["GET", "POST"])
 @app.route("/showData/<year>/<month>", methods=["GET", "POST"])
@@ -23,12 +36,12 @@ def showData(year='none', month='none'):
 	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
 
 	expenseConfigForm = forms.ExpenseConfigureForm()
-	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]	
+	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
 	if expenseConfigForm.validate_on_submit():
 		print("Got here")
 		return redirect(url_for('showData', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		
-	return render_template('data.html', analyzeTable=analyzeTable, expenseTable=expenseTable, stats=stats, 
+	return render_template('monthlyData.html', analyzeTable=analyzeTable, expenseTable=expenseTable, stats=stats, 
 		monthStr=monthStr, expenseConfigForm=expenseConfigForm)
 
 @app.route("/", methods=["GET","POST"])

@@ -15,7 +15,8 @@
 				{% set navigation_bar = [
 					('home', 'Home'),
 					('configure', 'Configure'),
-					('showData', 'Data')			
+					('showData', 'Monthly Data'),
+					('yearlyAnalysis', 'Yearly Analysis'),
 				] %}
 				{% for id, text in navigation_bar %}
 					<a class="nav-item nav-link {% if id == activePage %} active{% endif %}" href="{{ url_for(id) }}">{{ text }}</a>

@@ -6,15 +6,20 @@ from tracker_app.models import Category, User, Expense, Metadata
 from datetime import date
 import datetime
 
+class YearlyAnalysisConfigureForm(FlaskForm):
+	yearChoices = []
+	year = SelectField('Year', choices=yearChoices, validate_choice=False)
+	submit = SubmitField('Change Year')
+
 class ExpenseConfigureForm(FlaskForm):
 	# Build the list of available years based on records in database
 	records = Expense.query.with_entities(Expense.date).all()
-	yearChoices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().all()]	
+	yearChoices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().all()]
 			
 	monthChoices = [(1,'January'), (2,'February'), (3,'March'), (4,'April'), (5,'May'), (6,'June'),
 		(7, 'July'), (8,'August'), (9,'September'), (10,'October'), (11,'November'), (12,'December')]
 					
-	year = SelectField('Year', choices=yearChoices, validate_choice=False)
+	year = SelectField('Year', choices=[], validate_choice=False)
 	month = SelectField('Month', choices=monthChoices, validate_choice=False, default=datetime.datetime.today().month)
 	submit = SubmitField('Change Month')
 
