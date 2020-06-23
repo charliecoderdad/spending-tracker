@@ -19,12 +19,13 @@ def yearlyAnalysis(year='none'):
 	
 	analysis = yearInfo.YearInfo(year)
 	stats = analysis.getYearlyStats()
+	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()
 	
 	if analysisForm.validate_on_submit():
 		return redirect(url_for('yearlyAnalysis', year=analysisForm.year.data))
 	
 	return render_template('yearlyAnalysis.html', analysisForm=analysisForm, stats=stats, yearStr=year,
-			categoryAnalysisTable=categoryAnalysisTable)
+			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable)
 
 @app.route("/monthlyAnalysis/", methods=["GET", "POST"])
 @app.route("/monthlyAnalysis/<year>/<month>", methods=["GET", "POST"])

@@ -53,8 +53,8 @@ class CategoryTable():
 		for cat in catDict:
 			table += "<tr>"
 			table += "<td>" + str(cat) + "</td>"
-			table += "<td>$" + str("{:.2f}".format(catDict[cat]['total'])) + "</td>"
-			table += "<td>" + str("{:.2f}".format(catDict[cat]['percent'])) + "%</td>"
+			table += "<td>$" + str("{:,.2f}".format(catDict[cat]['total'])) + "</td>"
+			table += "<td>" + str("{:,.2f}".format(catDict[cat]['percent'])) + "%</td>"
 		table += "</table>"
 		
 		return Markup(table)

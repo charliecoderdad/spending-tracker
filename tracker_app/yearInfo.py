@@ -1,5 +1,5 @@
 from flask import Markup, url_for
-from tracker_app.models import Expense, Metadata
+from tracker_app.models import Expense, Metadata, Category
 from sqlalchemy import and_, func, extract
 import calendar, datetime
 from tracker_app import db
@@ -12,6 +12,46 @@ class YearInfo():
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
 		self.num_days = (self.endDate - self.startDate).days		
+
+	def breakdownByMonthAnalysisTable(self):
+		months = db.session.query(Metadata).order_by(Metadata.monthNum).filter(Metadata.year == self.year).all()
+		
+		tableHeaders = ['Month', 'Total', 'Min. Spending', 'Discretionary']
+		table = f"Monthly Breakdown"			
+		table += "<table border=1>"
+		table += "<thead><tr>"
+		for item in tableHeaders:
+			table += "<th>" + item + "</th>"
+		table += "</tr></thead>"
+		for month in months:
+
+			monthTotal = db.session.query(
+				func.sum(Expense.amount)).filter(
+					and_(
+						extract('year', Expense.date) == 2020,
+						extract('month', Expense.date) == month.monthNum)
+					).scalar()
+					
+			monthMinSpendTotal = db.session.query(
+				func.sum(Expense.amount)).join(Category).filter(
+					and_(
+						Category.discretionary == False,
+						extract('year', Expense.date) == 2020,
+						extract('month', Expense.date) == month.monthNum)
+					).scalar()
+			
+			if monthMinSpendTotal is None:
+				monthMinSpendTotal = 0
+			monthDiscSpendTotal = monthTotal - monthMinSpendTotal
+			
+			table += "<tr>"
+			table += "<td>" + month.monthStr + "</td>"
+			table += "<td>$" + str("{:,.2f}".format(monthTotal)) + "</td>"
+			table += "<td>$" + str("{:,.2f}".format(monthMinSpendTotal)) + "</td>"
+			table += "<td>$" + str("{:,.2f}".format(monthDiscSpendTotal)) + "</td>"
+			table += "</tr>"
+		table += "</table>"		
+		return Markup(table)
 		
 	def getYearlyStats(self):
 		total = Expense.query.with_entities(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()		
