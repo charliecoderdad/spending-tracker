@@ -20,7 +20,7 @@ def yearlyAnalysis(year=None, spender=None):
 	catTable = categoryTable.CategoryTable(year, spender=spender)
 	categoryAnalysisTable = catTable.getCategoryAnalysisTable()
 	
-	analysis = yearInfo.YearInfo(year)
+	analysis = yearInfo.YearInfo(year, spender=spender)
 	stats = analysis.getYearlyStats()
 	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()
 	

@@ -1,5 +1,5 @@
 from flask import Markup, url_for
-from tracker_app.models import Expense, Metadata, Category
+from tracker_app.models import Expense, Metadata, Category, User
 from tracker_app import helpers
 from sqlalchemy import and_, func, extract
 import calendar, datetime
@@ -7,12 +7,15 @@ from tracker_app import db
 
 
 class YearInfo():
-	def __init__(self, year):
+	def __init__(self, year, spender=None):
 		self.year = int(year)
 		self.isCurrentYear = bool(int(year) == datetime.datetime.today().year)
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
 		self.num_days = (self.endDate - self.startDate).days		
+		self.spender = spender
+		if (self.spender == "All"):
+			self.spender = None
 
 	def breakdownByMonthAnalysisTable(self):
 		months = db.session.query(Metadata).order_by(Metadata.monthNum).filter(Metadata.year == self.year).all()
@@ -21,25 +24,45 @@ class YearInfo():
 		table = f"Monthly Breakdown"
 		table += helpers.getTableHeadTags(tableHeaders)		
 		for month in months:
-
-			monthTotal = db.session.query(
-				func.sum(Expense.amount)).filter(
-					and_(
-						extract('year', Expense.date) == self.year,
-						extract('month', Expense.date) == month.monthNum)
-					).scalar()
-					
-			monthMinSpendTotal = db.session.query(
-				func.sum(Expense.amount)).join(Category).filter(
-					and_(
-						Category.discretionary == False,
-						extract('year', Expense.date) == self.year,
-						extract('month', Expense.date) == month.monthNum)
-					).scalar()
-			
+			# If no spender specified we can sum all records for the given year/month
+			if (self.spender is None):
+				monthTotal = db.session.query(
+					func.sum(Expense.amount)).filter(
+						and_(
+							extract('year', Expense.date) == self.year,
+							extract('month', Expense.date) == month.monthNum)
+						).scalar()
+						
+				monthMinSpendTotal = db.session.query(
+					func.sum(Expense.amount)).join(Category).filter(
+						and_(
+							Category.discretionary == False,
+							extract('year', Expense.date) == self.year,
+							extract('month', Expense.date) == month.monthNum)
+						).scalar()
+			# else if a spender id is provided we need to sum based on spender 
+			else:
+				monthTotal = db.session.query(
+					func.sum(Expense.amount)).join(User).filter(
+						and_(
+							extract('year', Expense.date) == self.year,
+							extract('month', Expense.date) == month.monthNum),
+							User.username == self.spender
+						).scalar()
+						
+				monthMinSpendTotal = db.session.query(
+					func.sum(Expense.amount)).join(Category).join(User).filter(
+						and_(
+							Category.discretionary == False,
+							extract('year', Expense.date) == self.year,
+							extract('month', Expense.date) == month.monthNum),
+							User.username == self.spender
+						).scalar()
+				
 			if monthMinSpendTotal is None:
 				monthMinSpendTotal = 0
-			print
+			if monthTotal is None:
+				monthTotal = 0
 			monthDiscSpendTotal = monthTotal - monthMinSpendTotal
 			
 			table += "<tr>"
