@@ -129,6 +129,8 @@ class YearInfo():
 	###
 	def getStartDate(self):
 		month = Metadata.query.with_entities(func.min(Metadata.monthNum)).filter(Metadata.year == self.year).scalar()
+		if bool(month) == False:
+			return datetime.date.today()
 		if (month == 1 or self.isCurrentYear == "False"):
 			return datetime.date(self.year, 1, 1)
 		else:
