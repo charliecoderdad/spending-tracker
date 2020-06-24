@@ -23,12 +23,11 @@ def yearlyAnalysis(year=None, spender=None):
 	analysis = yearInfo.YearInfo(year, spender=spender)
 	stats = analysis.getYearlyStats()
 	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()
-	
 	if yearlyForm.validate_on_submit():
 		return redirect(url_for('yearlyAnalysis', year=yearlyForm.year.data, spender=yearlyForm.spender.data))
 	
 	return render_template('yearlyAnalysis.html', yearlyForm=yearlyForm, stats=stats, yearStr=year,
-			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable)
+			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable, spender=spender)
 
 @app.route("/monthlyAnalysis/", methods=["GET", "POST"])
 @app.route("/monthlyAnalysis/<year>/<month>/<spender>", methods=["GET", "POST"])
@@ -58,7 +57,7 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 				spender=monthlyForm.spender.data))
 		
 	return render_template('monthlyData.html', categoryAnalysisTable=categoryAnalysisTable, expenseTable=expenseTable, stats=stats, 
-		monthStr=monthStr, monthlyForm=monthlyForm)
+		monthStr=monthStr, monthlyForm=monthlyForm, spender=spender)
 
 @app.route("/", methods=["GET","POST"])
 def home():
