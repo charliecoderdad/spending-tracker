@@ -90,17 +90,23 @@ def home():
 def configure():
 	newUserForm = forms.NewUserForm()
 	newCategoryForm = forms.NewCategoryForm()
-	if newUserForm.validate_on_submit():
-		user = User(username=newUserForm.username.data)
-		db.session.add(user)
-		db.session.commit()
-		flash(f"User '{user.username}' has been successfully added", "success")
+	if newUserForm.validate_on_submit():		
+		if bool(db.session.query(User).filter(User.username == newUserForm.username.data).first()):
+			flash(f"Error adding new user.  '{newUserForm.username.data}' already exists.", "danger")
+		else:
+			user = User(username=newUserForm.username.data)
+			db.session.add(user)
+			db.session.commit()
+			flash(f"User '{user.username}' has been successfully added", "success")
 		return redirect(url_for('configure'))
-	if newCategoryForm.validate_on_submit():
-		cat = Category(expenseCategory=newCategoryForm.category.data, discretionary=newCategoryForm.discretionary.data)
-		db.session.add(cat)
-		db.session.commit()
-		flash(f"User '{cat.expenseCategory}' has been successfully added", "success")
+	if newCategoryForm.validate_on_submit():		
+		if bool(db.session.query(Category).filter(Category.expenseCategory == newCategoryForm.category.data).first()):
+			flash(f"Error adding new category.  '{newCategoryForm.category.data}' already exists.", "danger")
+		else:		
+			cat = Category(expenseCategory=newCategoryForm.category.data, discretionary=newCategoryForm.discretionary.data)	
+			db.session.add(cat)
+			db.session.commit()
+			flash(f"User '{cat.expenseCategory}' has been successfully added", "success")
 		return redirect(url_for('configure'))
 	return render_template('configure.html', users=User.query.order_by(User.username).all(), newUserForm=newUserForm,
 				newCategoryForm=newCategoryForm, categories=Category.query.order_by(Category.expenseCategory).all())
@@ -111,7 +117,7 @@ def deleteCategory(categoryId):
 	deletedCategory = Category.query.filter(Category.categoryId == categoryId).first().expenseCategory
 	
 	if categoryExistsInRecord:
-		flash(f"Error: '{deletedCategory}' is being used in one or more records", "danger")
+		flash(f"Error: Unable to delete '{deletedCategory}'.  It is being used in one or more records.", "danger")
 	else:				
 		Category.query.filter(Category.categoryId == categoryId).delete()
 		db.session.commit()
@@ -121,9 +127,13 @@ def deleteCategory(categoryId):
 @app.route("/deleteUser/<userId>", methods=["GET","POST"])
 def deleteUser(userId):
 	deletedUser = User.query.filter(User.userId == userId).first().username
-	User.query.filter(User.userId == userId).delete()
-	db.session.commit()
-	flash(f"User '{deletedUser}' has been successfully removed", "success")
+	
+	if bool(db.session.query(Expense).filter(Expense.spenderId == userId).first()):
+		flash(f"Error: Unable to delete '{deletedUser}'.  It is being used in one or more records.", "danger")	
+	else:
+		User.query.filter(User.userId == userId).delete()
+		db.session.commit()
+		flash(f"User '{deletedUser}' has been successfully removed", "success")
 	return redirect(url_for('configure'))
 	
 @app.route("/deleteExpense/<expenseId>", methods=["GET","POST"])

@@ -92,6 +92,10 @@ class YearInfo():
 		for expense in expenses:
 			if (expense.myCategory.discretionary):
 				discTotal += expense.amount
+		if total is None:
+			total = 0
+		if discTotal is None:
+			discTotal = 0
 		requiredTotal = total - discTotal				
 							
 		daysInyear = 366 if calendar.isleap(self.year) else 365
