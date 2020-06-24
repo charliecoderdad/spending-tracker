@@ -3,3 +3,8 @@
         max-width: 1350px;
     }
 }
+
+textarea {
+  width: 400px;
+  height: 125px;
+}

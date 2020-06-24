@@ -2,27 +2,66 @@
 {% set activePage = "home" %}
 
 {% block content %}
-<h1 class="text-primary">Spending Tracker</h1>
+<h1 class="text-primary">New Expense</h1>
 
 <div class="row" id="add-expense">	
 	
-	<div class="col-sm border rounded">
-		<h2>Input an expense</h2>
-		<form action={{ url_for('home') }} method="POST">
-			<fieldset class="form-group">				
-				{{ newExpenseForm.csrf_token }}
-				{{ newExpenseForm.date.label }} {{ newExpenseForm.date(class='datepicker') }}<br>
-				{{ newExpenseForm.expenseCategory.label }} {{ newExpenseForm.expenseCategory }}<br>
-				{{ newExpenseForm.spender.label }} {{ newExpenseForm.spender }}<br>
-				{{ newExpenseForm.amount.label }} {{ newExpenseForm.amount }}
-				{% if newExpenseForm.errors.amount %}
-					<span class="text-danger small">{{ newExpenseForm.errors.amount }}</span>
-				{% endif %}
-				<br>
-				{{ newExpenseForm.description }}<br>
-				{{ newExpenseForm.submit }}				
-			</fieldset>			
-		</form>
+	<div class="col-sm border rounded px-4 py-3">
+		
+		<form method="POST" action={{ url_for('home') }}>
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right ">
+					{{ newExpenseForm.csrf_token }}				
+					Expense Date
+				</div>									
+				<div class="col-lg-3">
+					{{ newExpenseForm.date(class='datepicker form-control') }}
+				</div>	
+			</div>				
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right">
+					{{ newExpenseForm.spender.label }}
+				</div>
+				<div class="col-lg-3">
+					{{ newExpenseForm.spender(class='form-control') }}
+				</div>				
+			</div>
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right">
+					{{ newExpenseForm.expenseCategory.label }}
+				</div>
+				<div class="col-lg-3">
+					 {{ newExpenseForm.expenseCategory(class='form-control') }}
+				</div>				
+			</div>
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right">
+					{{ newExpenseForm.amount.label }}
+				</div>
+				<div class="col-lg-3">
+					{{ newExpenseForm.amount(class='form-control') }}	
+					{% if newExpenseForm.errors.amount %}
+						<span class="text-danger small">{{ newExpenseForm.errors.amount }}</span>
+					{% endif %}
+				</div>			
+			</div>
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right"></div>
+				<div class="col-lg-5">
+					{{ newExpenseForm.description }}
+				</div>				
+			</div>
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right"></div>
+				<div class="col-lg-2">
+					{{ newExpenseForm.submit(class='form-control btn btn-primary') }}	
+				</div>				
+			</div>			
+		</form>	
 		
 	</div>		
 </div>
