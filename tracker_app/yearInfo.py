@@ -75,8 +75,19 @@ class YearInfo():
 		return Markup(table)
 		
 	def getYearlyStats(self):
-		total = Expense.query.with_entities(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()		
-		expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()				
+		if self.spender is None:
+			total = db.session.query(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()
+			expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()
+		else:
+			total = db.session.query(func.sum(Expense.amount)).join(User).filter(and_(
+					extract('year', Expense.date)==self.year,
+					User.username == self.spender
+				)).scalar()
+			expenses = db.session.query(Expense).join(User).filter(and_(
+					extract('year', Expense.date) == self.year,
+					User.username == self.spender
+				)).all()
+			
 		discTotal = 0
 		for expense in expenses:
 			if (expense.myCategory.discretionary):
