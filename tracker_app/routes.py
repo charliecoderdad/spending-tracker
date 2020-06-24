@@ -5,8 +5,8 @@ from tracker_app.models import User, Category, Expense, Metadata
 from sqlalchemy import and_
 import datetime, calendar
 
-@app.route("/analysis/", methods=["GET", "POST"])
-@app.route("/analysis/<year>", methods=["GET", "POST"])
+@app.route("/yearlyAnalysis/", methods=["GET", "POST"])
+@app.route("/yearlyAnalysis/<year>", methods=["GET", "POST"])
 def yearlyAnalysis(year='none'):
 	if (year == "none"):
 		year = datetime.datetime.today().year
@@ -46,6 +46,10 @@ def monthlyAnalysis(year='none', month='none'):
 
 	expenseConfigForm = forms.ExpenseConfigureForm()
 	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	spenderChoices = [u.username for u in db.session.query(User.username).all()]
+	spenderChoices.append("All")
+	
+	expenseConfigForm.spender.choices = spenderChoices
 	if expenseConfigForm.validate_on_submit():
 		return redirect(url_for('monthlyAnalysis', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
 		

@@ -1,5 +1,6 @@
 from flask import Markup, url_for
 from tracker_app.models import Expense, Metadata, Category
+from tracker_app import helpers
 from sqlalchemy import and_, func, extract
 import calendar, datetime
 from tracker_app import db
@@ -17,18 +18,14 @@ class YearInfo():
 		months = db.session.query(Metadata).order_by(Metadata.monthNum).filter(Metadata.year == self.year).all()
 		
 		tableHeaders = ['Month', 'Total', 'Min. Spending', 'Discretionary']
-		table = f"Monthly Breakdown"			
-		table += "<table border=1>"
-		table += "<thead><tr>"
-		for item in tableHeaders:
-			table += "<th>" + item + "</th>"
-		table += "</tr></thead>"
+		table = f"Monthly Breakdown"
+		table += helpers.getTableHeadTags(tableHeaders)		
 		for month in months:
 
 			monthTotal = db.session.query(
 				func.sum(Expense.amount)).filter(
 					and_(
-						extract('year', Expense.date) == 2020,
+						extract('year', Expense.date) == self.year,
 						extract('month', Expense.date) == month.monthNum)
 					).scalar()
 					
@@ -36,12 +33,13 @@ class YearInfo():
 				func.sum(Expense.amount)).join(Category).filter(
 					and_(
 						Category.discretionary == False,
-						extract('year', Expense.date) == 2020,
+						extract('year', Expense.date) == self.year,
 						extract('month', Expense.date) == month.monthNum)
 					).scalar()
 			
 			if monthMinSpendTotal is None:
 				monthMinSpendTotal = 0
+			print
 			monthDiscSpendTotal = monthTotal - monthMinSpendTotal
 			
 			table += "<tr>"

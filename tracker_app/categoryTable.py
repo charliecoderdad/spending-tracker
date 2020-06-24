@@ -1,5 +1,6 @@
 from flask import Markup, url_for
 from tracker_app.models import Expense, Metadata
+from tracker_app import helpers
 import datetime
 from sqlalchemy import and_, func, extract
 import calendar, datetime
@@ -44,12 +45,8 @@ class CategoryTable():
 		table = f"Categorical Analysis"
 		if (self.month == -1):
 			table += f" for {self.year}" 
-			
-		table += "<table border=1>"
-		table += "<thead><tr>"
-		for item in tableHeaders:
-			table += "<th>" + item + "</th>"
-		table += "</tr></thead>"	
+
+		table += helpers.getTableHeadTags(tableHeaders)		
 		for cat in catDict:
 			table += "<tr>"
 			table += "<td>" + str(cat) + "</td>"

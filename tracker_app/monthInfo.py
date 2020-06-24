@@ -1,9 +1,9 @@
 from flask import Markup, url_for
 from tracker_app.models import Expense
-import datetime
 from sqlalchemy import and_
 import calendar, datetime
 from collections import OrderedDict
+from tracker_app import helpers
 
 class MonthInfo():
 	def __init__(self, year, month):
@@ -46,13 +46,9 @@ class MonthInfo():
 
 	def getExpenseTable(self):	
 		expenses = self.expenses
-		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description']			
+		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description', '']
 		table = "Expenses - " + str(expenses.count()) + " records"
-		table += "<table border=1>"
-		table += "<thead><tr>"
-		for item in tableHeaders:
-			table += "<th>" + item + "</th>"
-		table += "</tr></thead>"	
+		table += helpers.getTableHeadTags(tableHeaders)		
 		for expense in expenses:
 			formattedDate = expense.date.strftime("%B %d, %Y")
 			table += "<tr>"
