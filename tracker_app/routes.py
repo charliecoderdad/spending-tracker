@@ -38,7 +38,7 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 		year = datetime.datetime.today().year
 		month = datetime.datetime.today().month
 
-	analysis = monthInfo.MonthInfo(year, month)
+	analysis = monthInfo.MonthInfo(year, month, spender)
 	
 	catTable = categoryTable.CategoryTable(year, month=month, spender=spender)
 	categoryAnalysisTable = catTable.getCategoryAnalysisTable()

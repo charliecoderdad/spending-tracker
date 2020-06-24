@@ -24,7 +24,6 @@ class CategoryTable():
 			if (self.spender is None):
 				expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()
 			else:
-				print(f"\n\nSelf spender: {self.spender}")
 				expenses = db.session.query(Expense).join(User).filter(and_(
 						extract('year', Expense.date) == self.year,
 						User.username == self.spender

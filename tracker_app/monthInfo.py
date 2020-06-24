@@ -1,23 +1,34 @@
 from flask import Markup, url_for
-from tracker_app.models import Expense
+from tracker_app.models import Expense, User
 from sqlalchemy import and_
 import calendar, datetime
 from collections import OrderedDict
-from tracker_app import helpers
+from tracker_app import helpers, db
 
 class MonthInfo():
-	def __init__(self, year, month):
+	def __init__(self, year, month, spender=None):
 		self.year = year
 		self.month = month
 
 		self.num_days = calendar.monthrange(int(self.year), int(self.month))[1]
 		start_date = datetime.date(int(self.year), int(self.month), 1)
-		end_date = datetime.date(int(self.year), int(self.month), self.num_days)		
-		self.expenses = Expense.query.filter(and_(
+		end_date = datetime.date(int(self.year), int(self.month), self.num_days)
+		self.isCurrentMonth = bool(int(year) == datetime.datetime.today().year and int(month) == datetime.datetime.today().month)
+		self.spender = spender
+		if self.spender == "All":
+			self.spender = None
+		if self.spender is None:
+			self.expenses = db.session.query(Expense).filter(and_(
 						Expense.date >= start_date,
 						Expense.date <= end_date
-					)).order_by(Expense.date.desc())
-		self.isCurrentMonth = bool(int(year) == datetime.datetime.today().year and int(month) == datetime.datetime.today().month)
+					)).order_by(Expense.date.desc()).all()		
+		else:
+			self.expenses = db.session.query(Expense).join(User).filter(and_(
+						Expense.date >= start_date,
+						Expense.date <= end_date,
+						User.username == self.spender
+					)).order_by(Expense.date.desc()).all()
+			print(f"\n\n\n{self.expenses}\n\n\n")
 		
 	def getMonthlyExpenseStats(self):
 		expenses = self.expenses
@@ -47,7 +58,7 @@ class MonthInfo():
 	def getExpenseTable(self):	
 		expenses = self.expenses
 		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description', '']
-		table = "Expenses - " + str(expenses.count()) + " records"
+		table = "Expenses - " + str(len(expenses)) + " records"
 		table += helpers.getTableHeadTags(tableHeaders)		
 		for expense in expenses:
 			formattedDate = expense.date.strftime("%B %d, %Y")
