@@ -1,14 +1,15 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-import configparser
+import configparser, os
 
 config = configparser.ConfigParser()
-config.read('./config/tracker_app.conf')
+config.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config', 'tracker_app.conf'))
 
 database = config['Default']['Database_URI']
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = database
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "WooWeeWhateverKey"
 db = SQLAlchemy(app)
 from tracker_app.models import Expense, Metadata, User, Category
