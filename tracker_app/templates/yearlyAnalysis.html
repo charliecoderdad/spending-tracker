@@ -6,11 +6,22 @@
 
 <div class="row border rounded py-2" id="analysis-config-form">
 	<div class="col-lg">
-		<form method="POST" action={{ url_for('yearlyAnalysis') }}>
-			{{ analysisForm.csrf_token }}
-			{{ analysisForm.year.label }} {{ analysisForm.year }}
-			{{ analysisForm.submit }}
+		
+		<form method="POST" action={{ url_for('yearlyAnalysis') }} class="form-inline">
+			<div class="form-group">
+				{{ yearlyForm.csrf_token }}
+				<div class="form-group px-2">
+					{{ yearlyForm.year.label }} {{ yearlyForm.year(class_="form-control") }}
+				</div>
+				<div class="form-group px-2">
+					{{ yearlyForm.spender.label }} {{ yearlyForm.spender(class_="form-control") }}
+				</div>
+				{{ yearlyForm.submit }}
+			</div>			
 		</form>
+		
+		
+		
 	</div>
 </div>
 

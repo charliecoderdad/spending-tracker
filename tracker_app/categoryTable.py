@@ -1,5 +1,5 @@
 from flask import Markup, url_for
-from tracker_app.models import Expense, Metadata
+from tracker_app.models import Expense, Metadata, User
 from tracker_app import helpers
 import datetime
 from sqlalchemy import and_, func, extract
@@ -9,19 +9,38 @@ from collections import OrderedDict
 
 
 class CategoryTable():
-	def __init__(self, year, month=-1):
+	def __init__(self, year, month=None, spender=None):
 		self.year = int(year)	
 		self.month = month
+		self.spender = spender
+		if self.spender == "All":
+			self.spender = None
+		
 		
 	def getCategoryAnalysisTable(self):
 		
 		# If no month arg passed into class then we need expenses for entire year, else get for single month
-		if (self.month == -1):
-			expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()
+		if (self.month is None):
+			if (self.spender is None):
+				expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()
+			else:
+				print(f"\n\nSelf spender: {self.spender}")
+				expenses = db.session.query(Expense).join(User).filter(and_(
+						extract('year', Expense.date) == self.year,
+						User.username == self.spender
+						)).all()
+		# Else we are looking for expenses for specific month
 		else:
-			expenses = db.session.query(Expense).filter(and_(
-					extract('year', Expense.date) == self.year),
-					extract('month', Expense.date) == self.month).all()
+			if (self.spender is None):
+				expenses = db.session.query(Expense).filter(and_(
+						extract('year', Expense.date) == self.year),
+						extract('month', Expense.date) == self.month).all()
+			else:
+				expenses = db.session.query(Expense).join(User).filter(and_(
+						extract('year', Expense.date) == self.year,
+						extract('month', Expense.date) == self.month,
+						User.username == self.spender
+						)).all()
 		
 		# Generate categories dict
 		catDict = {}

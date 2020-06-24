@@ -6,55 +6,59 @@ from sqlalchemy import and_
 import datetime, calendar
 
 @app.route("/yearlyAnalysis/", methods=["GET", "POST"])
-@app.route("/yearlyAnalysis/<year>", methods=["GET", "POST"])
-def yearlyAnalysis(year='none'):
-	if (year == "none"):
+@app.route("/yearlyAnalysis/<year>/<spender>", methods=["GET", "POST"])
+def yearlyAnalysis(year=None, spender=None):
+	if (year is None):
 		year = datetime.datetime.today().year
 		
-	analysisForm = forms.YearlyAnalysisConfigureForm()
-	analysisForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	yearlyForm = forms.YearlyAnalysisConfigureForm()
+	yearlyForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	spenderChoices = [u.username for u in db.session.query(User.username).all()]
+	spenderChoices.append("All")
+	yearlyForm.spender.choices = spenderChoices
 	
-	catTable = categoryTable.CategoryTable(year)
+	catTable = categoryTable.CategoryTable(year, spender=spender)
 	categoryAnalysisTable = catTable.getCategoryAnalysisTable()
 	
 	analysis = yearInfo.YearInfo(year)
 	stats = analysis.getYearlyStats()
 	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()
 	
-	if analysisForm.validate_on_submit():
-		return redirect(url_for('yearlyAnalysis', year=analysisForm.year.data))
+	if yearlyForm.validate_on_submit():
+		return redirect(url_for('yearlyAnalysis', year=yearlyForm.year.data, spender=yearlyForm.spender.data))
 	
-	return render_template('yearlyAnalysis.html', analysisForm=analysisForm, stats=stats, yearStr=year,
+	return render_template('yearlyAnalysis.html', yearlyForm=yearlyForm, stats=stats, yearStr=year,
 			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable)
 
 @app.route("/monthlyAnalysis/", methods=["GET", "POST"])
-@app.route("/monthlyAnalysis/<year>/<month>", methods=["GET", "POST"])
-def monthlyAnalysis(year='none', month='none'):
+@app.route("/monthlyAnalysis/<year>/<month>/<spender>", methods=["GET", "POST"])
+def monthlyAnalysis(year=None, month=None, spender=None):
 		
-	if (year == "none" or year =="deleteExpense"):
+	if (year is None or year =="deleteExpense"):
 		year = datetime.datetime.today().year
 		month = datetime.datetime.today().month
 
 	analysis = monthInfo.MonthInfo(year, month)
 	
-	catTable = categoryTable.CategoryTable(year, month)
+	catTable = categoryTable.CategoryTable(year, month=month, spender=spender)
 	categoryAnalysisTable = catTable.getCategoryAnalysisTable()
 	
 	expenseTable = analysis.getExpenseTable()
 	stats = analysis.getMonthlyExpenseStats()
 	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
 
-	expenseConfigForm = forms.ExpenseConfigureForm()
-	expenseConfigForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	monthlyForm = forms.ExpenseConfigureForm()
+	monthlyForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
 	spenderChoices = [u.username for u in db.session.query(User.username).all()]
-	spenderChoices.append("All")
+	spenderChoices.append("All")	
+	monthlyForm.spender.choices = spenderChoices
 	
-	expenseConfigForm.spender.choices = spenderChoices
-	if expenseConfigForm.validate_on_submit():
-		return redirect(url_for('monthlyAnalysis', year=expenseConfigForm.year.data, month=expenseConfigForm.month.data))
+	if monthlyForm.validate_on_submit():
+		return redirect(url_for('monthlyAnalysis', year=monthlyForm.year.data, month=monthlyForm.month.data,
+				spender=monthlyForm.spender.data))
 		
 	return render_template('monthlyData.html', categoryAnalysisTable=categoryAnalysisTable, expenseTable=expenseTable, stats=stats, 
-		monthStr=monthStr, expenseConfigForm=expenseConfigForm)
+		monthStr=monthStr, monthlyForm=monthlyForm)
 
 @app.route("/", methods=["GET","POST"])
 def home():

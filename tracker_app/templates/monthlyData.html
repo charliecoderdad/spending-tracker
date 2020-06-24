@@ -8,36 +8,39 @@
 	<div class="col-lg">
 		<form method="POST" action={{ url_for('monthlyAnalysis') }} class="form-inline">
 			<div class="form-group">
-				{{ expenseConfigForm.csrf_token }}
+				{{ monthlyForm.csrf_token }}
 				<div class="form-group px-2">
-					{{ expenseConfigForm.year.label}} {{ expenseConfigForm.year(class_="form-control") }}
+					{{ monthlyForm.year.label}} {{ monthlyForm.year(class_="form-control") }}
 				</div>
 				<div class="form-group px-2">
-					{{ expenseConfigForm.month.label }} {{ expenseConfigForm.month(class_="form-control") }}
+					{{ monthlyForm.month.label }} {{ monthlyForm.month(class_="form-control") }}
 				</div>
 				<div class="form-group px-2">
-					{{ expenseConfigForm.spender.label }} {{ expenseConfigForm.spender(class_="form-control") }}
+					{{ monthlyForm.spender.label }} {{ monthlyForm.spender(class_="form-control") }}
 				</div>
-				{{ expenseConfigForm.submit }}
+				{{ monthlyForm.submit }}
 			</div>			
 		</form>
 	</div>
 </div>
 
 <div class="row border rounded my-3 px-3 py-2">
-	<div class="row" id="expenses-stats">	
-		<div class="col-lg py-3">
-			{{ stats }}	
-		</div>	
-	</div>
-
-	<div class="row" id="tables">	
-		<div class="col-lg-8 py-3">
-			{{ expenseTable }}	
-		</div>	
-		<div class="col-lg-4 py-3">
-			{{ categoryAnalysisTable }}
+	<div class="col">
+		<div class="row" id="expenses-stats">	
+			<div class="col-lg py-3">
+				{{ stats }}	
+			</div>	
+		</div>
+		
+		<div class="row" id="tables">	
+			<div class="col-lg-8 py-3">
+				{{ expenseTable }}	
+			</div>	
+			<div class="col-lg-4 py-3">
+				{{ categoryAnalysisTable }}
+			</div>
 		</div>
 	</div>
+	
 </div>
 {% endblock %}

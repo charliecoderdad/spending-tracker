@@ -9,7 +9,8 @@ import datetime
 class YearlyAnalysisConfigureForm(FlaskForm):
 	yearChoices = []
 	year = SelectField('Year', choices=yearChoices, validate_choice=False)
-	submit = SubmitField('Change Year')
+	spender = SelectField('Spender', choices=["All"], validate_choice=False, default="All")
+	submit = SubmitField('Update')
 
 class ExpenseConfigureForm(FlaskForm):
 	# Build the list of available years based on records in database
