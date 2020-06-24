@@ -12,7 +12,7 @@ class YearInfo():
 		self.isCurrentYear = bool(int(year) == datetime.datetime.today().year)
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
-		self.num_days = (self.endDate - self.startDate).days		
+		self.num_days = (self.endDate - self.startDate).days + 1		
 		self.spender = spender
 		if (self.spender == "All"):
 			self.spender = None
