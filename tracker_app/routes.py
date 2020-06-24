@@ -107,10 +107,15 @@ def configure():
 
 @app.route("/deleteCategory/<categoryId>", methods=["GET","POST"])
 def deleteCategory(categoryId):
+	categoryExistsInRecord = bool(db.session.query(Expense).filter(Expense.categoryId == categoryId).first())
 	deletedCategory = Category.query.filter(Category.categoryId == categoryId).first().expenseCategory
-	Category.query.filter(Category.categoryId == categoryId).delete()
-	db.session.commit()
-	flash(f"Category '{deletedCategory}' has been successfully removed", "success")
+	
+	if categoryExistsInRecord:
+		flash(f"Error: '{deletedCategory}' is being used in one or more records", "danger")
+	else:				
+		Category.query.filter(Category.categoryId == categoryId).delete()
+		db.session.commit()
+		flash(f"Category '{deletedCategory}' has been successfully removed", "success")
 	return redirect(url_for('configure'))
 	
 @app.route("/deleteUser/<userId>", methods=["GET","POST"])
