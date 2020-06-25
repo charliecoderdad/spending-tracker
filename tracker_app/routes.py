@@ -5,6 +5,50 @@ from tracker_app.models import User, Category, Expense
 from sqlalchemy import and_, extract
 import datetime, calendar
 
+@app.route("/editExpense/<expenseId>", methods=["GET", "POST"])
+def editExpense(expenseId=None):
+	editExpenseForm = forms.EditExpenseForm()
+	if editExpenseForm.validate_on_submit():
+		print(f"charlie: id {expenseId}")
+		print(f"charlie: new spender {editExpenseForm.spender.data}")
+		print(f"charlie: new category {editExpenseForm.expenseCategory.data}")
+		print(f"charlie: new amount {editExpenseForm.amount.data}")
+		print(f"charlie: new description {editExpenseForm.description.data}")
+		
+		newCategoryId = db.session.query(Category.categoryId).filter(Category.expenseCategory == editExpenseForm.expenseCategory.data).first()[0]
+		newSpenderId = db.session.query(User.userId).filter(User.username == editExpenseForm.spender.data).first()[0]
+		
+		e = db.session.query(Expense).get(expenseId)
+		e.date = editExpenseForm.date.data
+		e.categoryId = newCategoryId
+		e.spenderId = newSpenderId
+		e.amount = editExpenseForm.amount.data
+		e.description = editExpenseForm.description.data		
+		db.session.commit()
+		
+		flash(f"Expense record '{expenseId}' has been successfully udpated", "success")
+		return redirect(url_for('monthlyAnalysis'))
+	
+	expense = Expense.query.get(expenseId)	
+	
+	# Set defaults of the form to be equal to what expense we are editing
+	editExpenseForm.date.process_data(expense.date)	
+	editExpenseForm.amount.process_data(expense.amount)	
+	editExpenseForm.description.process_data(expense.description)	
+	spenderChoices = [u.username for u in db.session.query(User.username).all()]
+	spenderChoices.append("All")
+	editExpenseForm.spender.choices = spenderChoices
+	editExpenseForm.spender.process_data(expense.spender.username)
+	
+	sortedCategoriesList = [c.expenseCategory for c in Category.query.all()]
+	sortedCategoriesList.sort()
+	editExpenseForm.expenseCategory.choices = sortedCategoriesList
+	
+	editExpenseForm.expenseCategory.process_data(expense.myCategory.expenseCategory)
+	# End of setting default value of form to expense we are about to change
+	
+	return render_template('editExpense.html', editExpenseForm=editExpenseForm, expenseId=expenseId)	
+
 @app.route("/yearlyAnalysis/", methods=["GET", "POST"])
 @app.route("/yearlyAnalysis/<year>/<spender>", methods=["GET", "POST"])
 def yearlyAnalysis(year=None, spender=None):

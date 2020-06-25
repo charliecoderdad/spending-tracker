@@ -7,6 +7,15 @@ from tracker_app import db
 from sqlalchemy import extract
 import datetime
 
+class EditExpenseForm(FlaskForm):
+	# Get list of categories for category pull down		
+	date = DateField('Expense Date', validators=[DataRequired()], default=datetime.date.today)
+	expenseCategory = SelectField('Expense Category', validators=[DataRequired()], validate_choice=False)
+	spender = SelectField('Spender', validators=[DataRequired()], validate_choice=False)
+	amount = DecimalField('Amount', places=2, validators=[DataRequired(message='Amount must be in monetary format')])
+	description = TextAreaField('Description', render_kw={"placeholder": "Transaction details"})
+	submit = SubmitField('Edit Expense')
+
 class YearlyAnalysisConfigureForm(FlaskForm):
 	year = SelectField('Year', validate_choice=False)
 	spender = SelectField('Spender', choices=["All"], validate_choice=False, default="All")

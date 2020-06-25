@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% set activePage = "none" %}
+
+{% block content %}
+<h1 class="text-primary">Edit Expense</h1>
+
+<div class="row" id="add-expense">	
+	
+	<div class="col-sm border rounded px-4 py-3">
+		
+		<form method="POST" action={{ url_for('editExpense', expenseId=expenseId) }}>
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right ">
+					{{ editExpenseForm.csrf_token }}				
+					{{ editExpenseForm.date.label }}
+				</div>									
+				<div class="col-lg-3">
+					{{ editExpenseForm.date(class='datepicker form-control') }}
+				</div>	
+			</div>				
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right">
+					{{ editExpenseForm.spender.label }}
+				</div>
+				<div class="col-lg-3">
+					{{ editExpenseForm.spender(class='form-control') }}
+				</div>				
+			</div>
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right">
+					{{ editExpenseForm.expenseCategory.label }}
+				</div>
+				<div class="col-lg-3">
+					 {{ editExpenseForm.expenseCategory(class='form-control') }}
+				</div>				
+			</div>
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right">
+					{{ editExpenseForm.amount.label }}
+				</div>
+				<div class="col-lg-3">
+					{{ editExpenseForm.amount(class='form-control') }}	
+					{% if editExpenseForm.errors.amount %}
+						<span class="text-danger small">{{ editExpenseForm.errors.amount }}</span>
+					{% endif %}
+				</div>			
+			</div>
+			
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right"></div>
+				<div class="col-lg-5">
+					{{ editExpenseForm.description }}
+				</div>				
+			</div>
+			<div class="form-group row align-items-center">
+				<div class="col-sm-2 text-right"></div>
+				<div class="col-lg-2">
+					{{ editExpenseForm.submit(class='form-control btn btn-primary') }}	
+				</div>				
+			</div>			
+		</form>	
+		
+	</div>		
+</div>
+{% endblock %}
