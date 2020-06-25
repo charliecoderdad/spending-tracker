@@ -19,7 +19,7 @@ class YearInfo():
 
 	def breakdownByMonthAnalysisTable(self):
 		#months = db.session.query(extract('month', Expense.date)).filter(extract('year', Expense.date)==self.year).distinct().all()
-		months = db.session.query(extract('month', Expense.date)).filter(extract('year', Expense.date)==2020).order_by(Expense.date).distinct(extract('year', Expense.date)).all()
+		months = db.session.query(extract('month', Expense.date)).filter(extract('year', Expense.date)==self.year).order_by(Expense.date).distinct(extract('year', Expense.date)).all()
 		months = [i[0] for i in months]
 		
 		tableHeaders = ['Month', 'Total', 'Min. Spending', 'Discretionary']
