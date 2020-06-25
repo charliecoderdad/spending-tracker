@@ -50,3 +50,7 @@ Enable your newly configured site
 Restart apache service
 
 <code>sudo apachectl restart</code>
+
+### Database reset
+
+To start with fresh database delete the sqlite db file inside the spending-tracker/tracker_app directory and restart apache.
