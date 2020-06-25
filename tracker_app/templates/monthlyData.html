@@ -4,7 +4,7 @@
 {% block content %}
 <h1 class="text-primary">Expenses - {{ monthStr }}</h1>
 
-<div class="row py-3 px-3 border rounded" id="expense-config-form">
+<div class="row py-3 px-3 border rounded bg-light" id="expense-config-form">
 	<div class="col-lg">
 		<form method="POST" action={{ url_for('monthlyAnalysis') }} class="form-inline">
 			<div class="form-group">
