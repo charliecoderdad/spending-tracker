@@ -12,7 +12,7 @@
 			<div class="form-group row align-items-center">
 				<div class="col-sm-2 text-right ">
 					{{ newExpenseForm.csrf_token }}				
-					Expense Date
+					{{ newExpenseForm.date.label }}
 				</div>									
 				<div class="col-lg-3">
 					{{ newExpenseForm.date(class='datepicker form-control') }}

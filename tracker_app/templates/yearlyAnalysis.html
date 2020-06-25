@@ -4,21 +4,23 @@
 {% block content %}
 <h1 class="text-primary">Year Analysis - {{ yearStr }}</h1>
 
-<div class="row border rounded py-2" id="analysis-config-form">
+<div class="row py-3 px-3 border rounded" id="analysis-config-form">
 	<div class="col-lg">
 		
 		<form method="POST" action={{ url_for('yearlyAnalysis') }} class="form-inline">
 			<div class="form-group">
 				{{ yearlyForm.csrf_token }}
-				<div class="form-group px-2">
-					{{ yearlyForm.year.label }} {{ yearlyForm.year(class_="form-control") }}
-				</div>
-				<div class="form-group px-2">
-					{{ yearlyForm.spender.label }} {{ yearlyForm.spender(class_="form-control") }}
-				</div>
-				{{ yearlyForm.submit }}
+				{{ yearlyForm.year.label(class_='px-2') }} {{ yearlyForm.year(class_="form-control") }}
+			</div>
+			<div class="form-group px-2">
+				{{ yearlyForm.spender.label(class_='px-2') }} {{ yearlyForm.spender(class_="form-control") }}
+			</div>
+			<div class="form-group px-4">
+				{{ yearlyForm.submit(class='form-control btn btn-primary') }}
 			</div>			
+			
 		</form>					
+		
 	</div>
 </div>
 

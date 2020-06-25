@@ -35,10 +35,10 @@ class NewExpenseForm(FlaskForm):
 	submit = SubmitField('Create Expense')
 
 class NewCategoryForm(FlaskForm):
-	category = StringField('Expense Category', validators=[DataRequired()])
+	category = StringField('Category', validators=[DataRequired()])
 	discretionary = BooleanField('Discretionary', default=False)
 	submit = SubmitField('Create Category')
 
 class NewUserForm(FlaskForm):
-	username = 	StringField('Spender name', validators=[DataRequired()])
+	username = 	StringField('Spender', validators=[DataRequired()])
 	submit = SubmitField('Create Spender')
