@@ -1,8 +1,8 @@
 from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
 from tracker_app import forms, monthInfo, yearInfo, categoryTable
-from tracker_app.models import User, Category, Expense, Metadata
-from sqlalchemy import and_
+from tracker_app.models import User, Category, Expense
+from sqlalchemy import and_, extract
 import datetime, calendar
 
 @app.route("/yearlyAnalysis/", methods=["GET", "POST"])
@@ -12,7 +12,7 @@ def yearlyAnalysis(year=None, spender=None):
 		year = datetime.datetime.today().year
 		
 	yearlyForm = forms.YearlyAnalysisConfigureForm()
-	yearlyForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	yearlyForm.year.choices = [y[0] for y in db.session.query(extract('year', Expense.date)).distinct().all()]
 	spenderChoices = [u.username for u in db.session.query(User.username).all()]
 	spenderChoices.append("All")
 	yearlyForm.spender.choices = spenderChoices
@@ -47,7 +47,8 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
 
 	monthlyForm = forms.ExpenseConfigureForm()
-	monthlyForm.year.choices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().order_by(Metadata.year.desc()).all()]
+	monthlyForm.year.choices = [y[0] for y in db.session.query(extract('year', Expense.date)).distinct().order_by(Expense.date.desc()).all()]
+	
 	spenderChoices = [u.username for u in db.session.query(User.username).all()]
 	spenderChoices.append("All")	
 	monthlyForm.spender.choices = spenderChoices
@@ -73,15 +74,6 @@ def home():
 						spenderId=newExpenseForm.spender.data, amount=newExpenseForm.amount.data, description=newExpenseForm.description.data)
 		db.session.add(expense)
 		db.session.commit()
-		# add metadata about expense to database
-		if (bool(Metadata.query.filter(and_(Metadata.year == int(newExpenseForm.date.data.year), Metadata.monthNum == int(newExpenseForm.date.data.month))).first()) == False):
-			print("Did not find a metadata so I'm adding one")
-			md = Metadata(year=expense.date.year, monthNum=expense.date.month, monthStr=expense.date.strftime('%B'))
-			db.session.add(md)
-			db.session.commit()
-		else:
-			print("Already found a metadata you chuckle head!!!")
-			
 		flash(f"Created a new expense record", "info")
 		return redirect(url_for('home'))
 	return render_template('index.html', newExpenseForm=newExpenseForm)   

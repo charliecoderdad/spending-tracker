@@ -1,5 +1,5 @@
 from flask import Markup, url_for
-from tracker_app.models import Expense, Metadata, User
+from tracker_app.models import Expense, User
 from tracker_app import helpers
 import datetime
 from sqlalchemy import and_, func, extract
@@ -81,7 +81,7 @@ class CategoryTable():
 			return datetime.date(self.year, datetime.datetime.today().month, datetime.datetime.today().day)
 	
 	def getStartDate(self):
-		month = Metadata.query.with_entities(func.min(Metadata.monthNum)).filter(Metadata.year == self.year).scalar()
+		month = db.session.query(func.min(extract('month', Expense.date))).filter(extract('year', Expense.date)==2020).distinct().scalar()
 		if (month == 1 or self.isCurrentYear == "False"):
 			return datetime.date(self.year, 1, 1)
 		else:

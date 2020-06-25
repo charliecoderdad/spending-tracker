@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, DecimalField, BooleanField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, NumberRange
-from tracker_app.models import Category, User, Expense, Metadata
-from datetime import date
+from wtforms.validators import DataRequired
+from tracker_app.models import Expense
+from tracker_app import db
+from sqlalchemy import extract
 import datetime
 
 class YearlyAnalysisConfigureForm(FlaskForm):
@@ -14,8 +15,6 @@ class YearlyAnalysisConfigureForm(FlaskForm):
 
 class ExpenseConfigureForm(FlaskForm):
 	# Build the list of available years based on records in database
-	records = Expense.query.with_entities(Expense.date).all()
-	yearChoices = [r.year for r in Metadata.query.with_entities(Metadata.year).distinct().all()]
 			
 	monthChoices = [(1,'January'), (2,'February'), (3,'March'), (4,'April'), (5,'May'), (6,'June'),
 		(7, 'July'), (8,'August'), (9,'September'), (10,'October'), (11,'November'), (12,'December')]
@@ -27,7 +26,7 @@ class ExpenseConfigureForm(FlaskForm):
 
 class NewExpenseForm(FlaskForm):
 	# Get list of categories for category pull down		
-	date = DateField('Expense Date', validators=[DataRequired()], default=date.today)
+	date = DateField('Expense Date', validators=[DataRequired()], default=datetime.date.today)
 	expenseCategory = SelectField('Expense Category', validators=[DataRequired()], validate_choice=False)
 	spender = SelectField('Spender', validators=[DataRequired()], validate_choice=False)
 	amount = DecimalField('Amount', places=2, validators=[DataRequired(message='Amount must be in monetary format')])

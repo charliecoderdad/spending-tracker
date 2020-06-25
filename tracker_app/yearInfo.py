@@ -1,5 +1,5 @@
 from flask import Markup, url_for
-from tracker_app.models import Expense, Metadata, Category, User
+from tracker_app.models import Expense, Category, User
 from tracker_app import helpers
 from sqlalchemy import and_, func, extract
 import calendar, datetime
@@ -18,7 +18,8 @@ class YearInfo():
 			self.spender = None
 
 	def breakdownByMonthAnalysisTable(self):
-		months = db.session.query(Metadata).order_by(Metadata.monthNum).filter(Metadata.year == self.year).all()
+		months = db.session.query(extract('month', Expense.date)).filter(extract('year', Expense.date)==self.year).distinct().order_by(Expense.date).all()
+		months = [i[0] for i in months]
 		
 		tableHeaders = ['Month', 'Total', 'Min. Spending', 'Discretionary']
 		table = f"Monthly Breakdown"
@@ -30,7 +31,7 @@ class YearInfo():
 					func.sum(Expense.amount)).filter(
 						and_(
 							extract('year', Expense.date) == self.year,
-							extract('month', Expense.date) == month.monthNum)
+							extract('month', Expense.date) == month)
 						).scalar()
 						
 				monthMinSpendTotal = db.session.query(
@@ -38,7 +39,7 @@ class YearInfo():
 						and_(
 							Category.discretionary == False,
 							extract('year', Expense.date) == self.year,
-							extract('month', Expense.date) == month.monthNum)
+							extract('month', Expense.date) == month)
 						).scalar()
 			# else if a spender id is provided we need to sum based on spender 
 			else:
@@ -46,7 +47,7 @@ class YearInfo():
 					func.sum(Expense.amount)).join(User).filter(
 						and_(
 							extract('year', Expense.date) == self.year,
-							extract('month', Expense.date) == month.monthNum),
+							extract('month', Expense.date) == month),
 							User.username == self.spender
 						).scalar()
 						
@@ -55,7 +56,7 @@ class YearInfo():
 						and_(
 							Category.discretionary == False,
 							extract('year', Expense.date) == self.year,
-							extract('month', Expense.date) == month.monthNum),
+							extract('month', Expense.date) == month),
 							User.username == self.spender
 						).scalar()
 				
@@ -66,7 +67,7 @@ class YearInfo():
 			monthDiscSpendTotal = monthTotal - monthMinSpendTotal
 			
 			table += "<tr>"
-			table += "<td>" + month.monthStr + "</td>"
+			table += "<td>" + str(calendar.month_name[month]) + "</td>"
 			table += "<td>$" + str("{:,.2f}".format(monthTotal)) + "</td>"
 			table += "<td>$" + str("{:,.2f}".format(monthMinSpendTotal)) + "</td>"
 			table += "<td>$" + str("{:,.2f}".format(monthDiscSpendTotal)) + "</td>"
@@ -128,7 +129,7 @@ class YearInfo():
 	### Use this if starting budget in middle of the year.. otherwise return Jan 1st of the year under analysis
 	###
 	def getStartDate(self):
-		month = Metadata.query.with_entities(func.min(Metadata.monthNum)).filter(Metadata.year == self.year).scalar()
+		month = db.session.query(func.min(extract('month', Expense.date))).filter(extract('year', Expense.date)==2020).distinct().scalar()
 		if bool(month) == False:
 			return datetime.date.today()
 		if (month == 1 or self.isCurrentYear == "False"):
