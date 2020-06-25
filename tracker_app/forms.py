@@ -8,19 +8,14 @@ from sqlalchemy import extract
 import datetime
 
 class YearlyAnalysisConfigureForm(FlaskForm):
-	yearChoices = []
-	year = SelectField('Year', choices=yearChoices, validate_choice=False)
+	year = SelectField('Year', validate_choice=False)
 	spender = SelectField('Spender', choices=["All"], validate_choice=False, default="All")
 	submit = SubmitField('Update')
 
-class ExpenseConfigureForm(FlaskForm):
-	# Build the list of available years based on records in database
-			
-	monthChoices = [(1,'January'), (2,'February'), (3,'March'), (4,'April'), (5,'May'), (6,'June'),
-		(7, 'July'), (8,'August'), (9,'September'), (10,'October'), (11,'November'), (12,'December')]
-					
-	year = SelectField('Year', choices=[], validate_choice=False)
-	month = SelectField('Month', choices=monthChoices, validate_choice=False, default=datetime.datetime.today().month)
+class MonthlyAnalysisConfigureForm(FlaskForm):
+	month_choices = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+	year = SelectField('Year', validate_choice=False, default=datetime.datetime.today().year)
+	month = SelectField('Month', choices=month_choices, validate_choice=False, default=datetime.datetime.today().month)
 	spender = SelectField('Spender', choices=["All"], validate_choice=False, default="All")
 	submit = SubmitField('Update')
 

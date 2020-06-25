@@ -12,19 +12,26 @@ def yearlyAnalysis(year=None, spender=None):
 		year = datetime.datetime.today().year
 		
 	yearlyForm = forms.YearlyAnalysisConfigureForm()
+	if yearlyForm.validate_on_submit():
+		return redirect(url_for('yearlyAnalysis', year=yearlyForm.year.data, spender=yearlyForm.spender.data))
+		
 	yearlyForm.year.choices = [y[0] for y in db.session.query(extract('year', Expense.date)).distinct().all()]
+	yearlyForm.year.process_data(year)
+	
 	spenderChoices = [u.username for u in db.session.query(User.username).all()]
 	spenderChoices.append("All")
 	yearlyForm.spender.choices = spenderChoices
+	if spender is None:
+		yearlyForm.spender.process_data("All")
+	else:
+		yearlyForm.spender.process_data(spender)
 	
 	catTable = categoryTable.CategoryTable(year, spender=spender)
 	categoryAnalysisTable = catTable.getCategoryAnalysisTable()
 	
 	analysis = yearInfo.YearInfo(year, spender=spender)
 	stats = analysis.getYearlyStats()
-	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()
-	if yearlyForm.validate_on_submit():
-		return redirect(url_for('yearlyAnalysis', year=yearlyForm.year.data, spender=yearlyForm.spender.data))
+	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()	
 	
 	return render_template('yearlyAnalysis.html', yearlyForm=yearlyForm, stats=stats, yearStr=year,
 			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable, spender=spender)
@@ -46,16 +53,27 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 	stats = analysis.getMonthlyExpenseStats()
 	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
 
-	monthlyForm = forms.ExpenseConfigureForm()
-	monthlyForm.year.choices = [y[0] for y in db.session.query(extract('year', Expense.date)).distinct().order_by(Expense.date.desc()).all()]
+	monthlyForm = forms.MonthlyAnalysisConfigureForm()		
+	if monthlyForm.validate_on_submit():
+		convertedStringToIntMonth = datetime.datetime.strptime(monthlyForm.month.data, "%B").month
+		return redirect(url_for('monthlyAnalysis', year=monthlyForm.year.data, month=convertedStringToIntMonth,
+				spender=monthlyForm.spender.data))
+
+	monthlyForm.year.choices = [y[0] for y in db.session.query(extract('year', Expense.date)).distinct().all()]	
+
+	# Set these SelectField default values to be same as what just queried
+	monthlyForm.year.process_data(year)
+	monthlyForm.month.process_data(calendar.month_name[int(month)])
+	
+	#monthlyForm.month.choices = [calendar.month_name[m[0]] for m in db.session.query(extract('month', Expense.date)).distinct().filter(extract('year', Expense.date) == year).all()]	
 	
 	spenderChoices = [u.username for u in db.session.query(User.username).all()]
 	spenderChoices.append("All")	
 	monthlyForm.spender.choices = spenderChoices
-	
-	if monthlyForm.validate_on_submit():
-		return redirect(url_for('monthlyAnalysis', year=monthlyForm.year.data, month=monthlyForm.month.data,
-				spender=monthlyForm.spender.data))
+	if spender is None:
+		monthlyForm.spender.process_data("All")
+	else:
+		monthlyForm.spender.process_data(spender)
 		
 	return render_template('monthlyData.html', categoryAnalysisTable=categoryAnalysisTable, expenseTable=expenseTable, stats=stats, 
 		monthStr=monthStr, monthlyForm=monthlyForm, spender=spender)

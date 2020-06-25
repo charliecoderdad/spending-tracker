@@ -12,7 +12,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "WooWeeWhateverKey"
 db = SQLAlchemy(app)
-from tracker_app.models import Expense, Metadata, User, Category
+
+from tracker_app.models import Expense, User, Category
 db.create_all()
 db.session.commit()
 

@@ -129,7 +129,7 @@ class YearInfo():
 	### Use this if starting budget in middle of the year.. otherwise return Jan 1st of the year under analysis
 	###
 	def getStartDate(self):
-		month = db.session.query(func.min(extract('month', Expense.date))).filter(extract('year', Expense.date)==2020).distinct().scalar()
+		month = db.session.query(func.min(extract('month', Expense.date))).filter(extract('year', Expense.date)==self.year).distinct().scalar()
 		if bool(month) == False:
 			return datetime.date.today()
 		if (month == 1 or self.isCurrentYear == "False"):
