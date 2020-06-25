@@ -137,8 +137,8 @@ class YearInfo():
 			return datetime.date(self.year, 1, 1)
 		else:
 			my_num_days = calendar.monthrange(self.year, int(month))[1]
-			start_date = datetime.date(self.year, int(month), 1)
-			end_date = datetime.date(self.year, int(month), my_num_days)		
+			start_date = datetime.datetime(self.year, int(month), 1)
+			end_date = datetime.datetime(self.year, int(month), my_num_days)		
 			day = Expense.query.filter(and_(
 							Expense.date >= start_date,
 							Expense.date <= end_date

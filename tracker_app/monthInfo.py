@@ -11,8 +11,8 @@ class MonthInfo():
 		self.month = month
 
 		self.num_days = calendar.monthrange(int(self.year), int(self.month))[1]
-		start_date = datetime.date(int(self.year), int(self.month), 1)
-		end_date = datetime.date(int(self.year), int(self.month), self.num_days)
+		start_date = datetime.datetime(int(self.year), int(self.month), 1)
+		end_date = datetime.datetime(int(self.year), int(self.month), self.num_days)
 		self.isCurrentMonth = bool(int(year) == datetime.datetime.today().year and int(month) == datetime.datetime.today().month)
 		self.spender = spender
 		if self.spender == "All":
@@ -28,7 +28,6 @@ class MonthInfo():
 						Expense.date <= end_date,
 						User.username == self.spender
 					)).order_by(Expense.date.desc()).all()
-			print(f"\n\n\n{self.expenses}\n\n\n")
 		
 	def getMonthlyExpenseStats(self):
 		expenses = self.expenses
