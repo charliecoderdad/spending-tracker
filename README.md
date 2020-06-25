@@ -47,4 +47,6 @@ Enable your newly configured site
 
 <code>sudo a2ensite spending-tracker.conf</code>
 
+Restart apache service
+
 <code>sudo apachectl restart</code>
