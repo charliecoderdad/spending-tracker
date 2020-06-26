@@ -15,8 +15,6 @@ function expenseIdToDelete(theId) {
 
 <h1 class="text-primary">Expenses - {{ monthStr }}</h1>
 
-<a href="#deleteConfirmModal" data-toggle="modal">Open Modal</a>
-
 <div id="deleteConfirmModal" class="modal fade">
 	<div class="modal-dialog modal-confirm">
 		<div class="modal-content">
@@ -37,7 +35,7 @@ function expenseIdToDelete(theId) {
 	</div>
 </div>
 
-<div class="row py-3 px-3 border rounded bg-light" id="expense-config-form">
+<div class="row py-3 px-3 border rounded bg-light">
 	<div class="col-lg">
 		<form method="POST" action={{ url_for('monthlyAnalysis') }} class="form-inline">
 			<div class="form-group">
@@ -71,21 +69,25 @@ function expenseIdToDelete(theId) {
 {% endif %}
 
 <div class="row my-3 px-3 py-2">
-	<div class="col">
-		<div class="row justify-content-between" id="expenses-stats">	
+	
+	<div class="col-auto">	
+
+		<div class="row justify-content-center">
 			<div class="col-lg-6 py-3">
 				{{ stats }}	
-			</div>
-			<div class="col-lg-6 py-3 rounded">
+			</div>			
+		</div>
+
+		<div class="row">				
+			<div class="col-lg-8 py-3">
+				{{ expenseTable }}	
+			</div>			
+			<div class="col-lg-4 py-3">
 				{{ categoryAnalysisTable }}
 			</div>
 		</div>
-		
-		<div class="row" id="tables">	
-			<div class="col-lg py-3">
-				{{ expenseTable }}	
-			</div>				
-		</div>
-	</div>	
+	
+	</div>
+	
 </div>
 {% endblock %}

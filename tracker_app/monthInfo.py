@@ -59,8 +59,8 @@ class MonthInfo():
 	def getExpenseTable(self):	
 		expenses = self.expenses
 		tableHeaders = ['Date', 'Spender', 'Category', 'Amount', 'Description', '']
-		table = "Expenses - " + str(len(expenses)) + " records"
-		table += helpers.getTableHeadTags(tableHeaders)		
+		
+		table = helpers.getTableHeadTags(tableHeaders)		
 		for expense in expenses:
 			formattedDate = expense.date.strftime("%B %d, %Y")
 			table += "<tr>"
@@ -74,5 +74,6 @@ class MonthInfo():
 			table += "<a href='#deleteConfirmModal' data-toggle='modal' onClick='expenseIdToDelete(" + str(expense.expenseId) + ")'><img src=" + url_for('static', filename='delete.png') + " width='25' height='25' title='Delete Record'></a>"
 			table += "</td>"	
 		table += "</table>"
+		table += "Expenses - " + str(len(expenses)) + " records"
 		
 		return Markup(table)
