@@ -77,19 +77,16 @@ class YearInfo():
 		return Markup(table)
 		
 	def getYearlyStats(self):
-		if self.spender is None:
-			total = db.session.query(func.sum(Expense.amount)).filter(extract('year', Expense.date)==self.year).scalar()
-			expenses = db.session.query(Expense).filter(extract('year', Expense.date) == self.year).all()
-		else:
-			total = db.session.query(func.sum(Expense.amount)).join(User).filter(and_(
-					extract('year', Expense.date)==self.year,
-					User.username == self.spender
-				)).scalar()
-			expenses = db.session.query(Expense).join(User).filter(and_(
-					extract('year', Expense.date) == self.year,
-					User.username == self.spender
-				)).all()
-			
+		queries = []
+		queries.append(extract('year', Expense.date)==self.year)
+		if self.spender is not None:
+			print("appending spender query...")
+			print(f"self spender is {self.spender}")
+			queries.append(User.username == self.spender)
+				
+		total = db.session.query(func.sum(Expense.amount)).join(User).filter(and_(*queries)).scalar()
+		expenses = db.session.query(Expense).join(User).filter(and_(*queries)).all()
+					
 		discTotal = 0
 		for expense in expenses:
 			if (expense.myCategory.discretionary):
@@ -137,14 +134,4 @@ class YearInfo():
 			return datetime.date(self.year, 1, 1)
 		else:
 			firstExpRecord = db.session.query(func.min(Expense.date)).filter(extract('year', Expense.date) == self.year).first()[0]
-
-			#my_num_days = calendar.monthrange(self.year, int(month))[1]
-			#start_date = datetime.datetime(self.year, int(month), 1)
-			#end_date = datetime.datetime(self.year, int(month), my_num_days)					
-			#day = Expense.query.filter(and_(
-			#				Expense.date >= start_date,
-			#				Expense.date <= end_date
-			#			)).first().date.day
-			#return datetime.date(self.year, int(month), int(day))
-			print(f"First exp record date: {firstExpRecord}")
 			return firstExpRecord.date()

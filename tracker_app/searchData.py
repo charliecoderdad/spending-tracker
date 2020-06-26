@@ -40,7 +40,6 @@ class SearchData():
 		
 		self.expenses = db.session.query(Expense).join(Category).join(User).filter(and_(*queries)).order_by(Expense.date.desc()).all()
 		self.total = db.session.query(func.sum(Expense.amount)).join(Category).join(User).filter(and_(*queries)).scalar()
-		print(f"Charlie found total is {self.total}")
 			
 	def getExpenseTable(self):	
 		expenses = self.expenses
