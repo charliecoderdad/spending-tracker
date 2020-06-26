@@ -80,8 +80,6 @@ class YearInfo():
 		queries = []
 		queries.append(extract('year', Expense.date)==self.year)
 		if self.spender is not None:
-			print("appending spender query...")
-			print(f"self spender is {self.spender}")
 			queries.append(User.username == self.spender)
 				
 		total = db.session.query(func.sum(Expense.amount)).join(User).filter(and_(*queries)).scalar()

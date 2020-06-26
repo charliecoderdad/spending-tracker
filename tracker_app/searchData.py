@@ -40,6 +40,8 @@ class SearchData():
 		
 		self.expenses = db.session.query(Expense).join(Category).join(User).filter(and_(*queries)).order_by(Expense.date.desc()).all()
 		self.total = db.session.query(func.sum(Expense.amount)).join(Category).join(User).filter(and_(*queries)).scalar()
+		if self.total is None:
+			self.total = 0
 			
 	def getExpenseTable(self):	
 		expenses = self.expenses

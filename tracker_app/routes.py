@@ -174,12 +174,17 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 		monthStr=monthStr, monthlyForm=monthlyForm, spender=spender)
 
 @app.route("/", methods=["GET","POST"])
-def home():
+@app.route("/<lastUser>", methods=["GET","POST"])
+def home(lastUser=None):
 	newExpenseForm = forms.NewExpenseForm()
 	sortedCategoriesList = [(c.categoryId, c.expenseCategory) for c in Category.query.all()]
 	sortedCategoriesList.sort(key = lambda x: x[1])
 	newExpenseForm.expenseCategory.choices = sortedCategoriesList
 	newExpenseForm.spender.choices = [(u.userId, u.username) for u in User.query.all()]
+	
+	if lastUser is not None:
+		newExpenseForm.spender.process_data(lastUser)
+		
 	if newExpenseForm.validate_on_submit():
 		# add expense record to database
 		formattedAmount = "{:.2f}".format(newExpenseForm.amount.data)
@@ -188,7 +193,7 @@ def home():
 		db.session.add(expense)
 		db.session.commit()
 		flash(f"Created a new expense record", "info")
-		return redirect(url_for('home'))
+		return redirect(url_for('home', lastUser=newExpenseForm.spender.data))
 	return render_template('index.html', newExpenseForm=newExpenseForm)   
     
 @app.route("/configure", methods=["GET","POST"])
