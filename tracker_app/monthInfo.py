@@ -67,9 +67,11 @@ class MonthInfo():
 			table += "<td>" + expense.myCategory.expenseCategory + "</td>"
 			table += "<td>$" + str("{:.2f}".format(expense.amount)) + "</td>"
 			table += "<td>" + expense.description + "</td>"
-			table += "<td style='text-align:center'>"
+			table += "<td style='text-align:center' width='75 pixels'>"
+			#table += "<div class='row'>"
 			table += "<a href= " + url_for('editExpense', expenseId=expense.expenseId) + "><img src=" + url_for('static', filename='edit.png') + " width='25' height='25' title='Edit Record'></a>"
 			table += "<a href= " + url_for('deleteExpense', expenseId=expense.expenseId) + "><img src=" + url_for('static', filename='delete.png') + " width='25' height='25' title='Delete Record'></a>"
+			#table += "</div>"
 			table += "</td>"	
 		table += "</table>"
 		
