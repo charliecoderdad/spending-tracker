@@ -59,8 +59,8 @@ class CategoryTable():
 		# TODO: Sort the catDic by total		
 		catDict = OrderedDict(sorted(catDict.items(), key = lambda x: (int(x[1]['percent'])), reverse=True))
 		
-		tableHeaders = ['Category', 'Total', 'Percent']
-		table = f"Categorical Analysis"
+		tableHeaders = ['Category', 'Total', 'Percent']		
+		table = ""
 		if (self.month == -1):
 			table += f" for {self.year}" 
 

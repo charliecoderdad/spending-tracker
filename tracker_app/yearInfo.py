@@ -23,7 +23,7 @@ class YearInfo():
 		months = [i[0] for i in months]
 		
 		tableHeaders = ['Month', 'Total', 'Min. Spending', 'Discretionary']
-		table = f"Monthly Breakdown"
+		table = ""
 		table += helpers.getTableHeadTags(tableHeaders)		
 		for month in months:
 			# If no spender specified we can sum all records for the given year/month
@@ -96,20 +96,23 @@ class YearInfo():
 		requiredTotal = total - discTotal				
 							
 		daysInyear = 366 if calendar.isleap(self.year) else 365
-		stats = "<b>Total Spent: $" + str("{:,.2f}".format(total) + "</b>")
-		stats += "<br>Total Discretionary Spending: $" + str("{:,.2f}".format(discTotal))
-		stats += "<br>Minimum Required spending: $" + str("{:,.2f}".format(requiredTotal))
 		if (self.isCurrentYear):
 			dailyAvg = total / self.num_days
 			reqDailyAvg = requiredTotal / self.num_days
 		else:
 			dailyAvg = total / daysInyear
-			reqDailyAvg = requiredTotal / daysInyear
-		stats += "<br>Average daily spending: $" + str("{:,.2f}".format(dailyAvg))
+			reqDailyAvg = requiredTotal / daysInyear	
 		
-		if (self.isCurrentYear):
-			stats += "<br><br><b>Projected yearly spending: $" + str("{:,.2f}".format(dailyAvg * daysInyear) + "</b>")
-			stats += "<br>Projected minimal spending: $" + str("{:,.2f}".format(reqDailyAvg * daysInyear) + "</b>")
+		stats = "<table class='table table-sm'>"
+		stats += "<tr><td><b>Total</b></td><td><b>$" + str("{:,.2f}".format(total)) + "</b></td.</tr>"
+		stats += "<tr><td>Minimum Amount Spent</td><td>$" + str("{:,.2f}".format(requiredTotal)) + "</td.</tr>"
+		stats += "<tr><td>Discretionary Amount Spent</td><td>$" + str("{:,.2f}".format(discTotal)) + "</td.</tr>"
+		stats += "<tr><td>Avg. Daily Spending</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
+		if self.isCurrentYear:
+			stats += "<tr><td>Projected Final Yearly Spending</td><td>$" + str("{:,.2f}".format(dailyAvg * daysInyear)) + "</td.</tr>"
+			stats += "<tr><td>Projected Final Minimal Yearly Spending</td><td>$" + str("{:,.2f}".format(reqDailyAvg * daysInyear)) + "</td.</tr>"
+		stats += "</table>"
+	
 		return Markup(stats)		
 	
 	###

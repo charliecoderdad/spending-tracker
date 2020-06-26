@@ -40,18 +40,20 @@ class MonthInfo():
 				discretionarySpending += expense.amount
 			else:
 				requiredSpending += expense.amount
-			
-		stats = "<b>Total: $" + str("{:,.2f}".format(total) + "</b>")
-		stats += "<br>Discretionary spending: $" + str("{:,.2f}".format(discretionarySpending))
-		stats += "<br>Required spending: $" + str("{:,.2f}".format(requiredSpending))
+				
 		if (self.isCurrentMonth):
 			dailyAvg = total / datetime.datetime.today().day
 		else:
 			dailyAvg = total / self.num_days
-		stats += "<br>Average daily spending: $" + str("{:,.2f}".format(dailyAvg))
-		
+
+		stats = "<table class='table table-sm'>"
+		stats += "<tr><td><b>Total</b></td><td><b>$" + str("{:,.2f}".format(total)) + "</b></td.</tr>"
+		stats += "<tr><td>Minimum Amount Spent</td><td>$" + str("{:,.2f}".format(requiredSpending)) + "</td.</tr>"
+		stats += "<tr><td>Discretionary Amount Spent</td><td>$" + str("{:,.2f}".format(discretionarySpending)) + "</td.</tr>"
+		stats += "<tr><td>Avg. Daily Spending</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
 		if (self.isCurrentMonth):
-			stats += "<br><br>Projected final spending: $" + str("{:,.2f}".format(dailyAvg * self.num_days))
+			stats += "<tr><td>Projected Final Spending</td><td>$" + str("{:,.2f}".format(dailyAvg * self.num_days)) + "</td.</tr>"
+		stats += "</table>"
 		return Markup(stats)		
 
 	def getExpenseTable(self):	

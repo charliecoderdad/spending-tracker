@@ -30,18 +30,23 @@
 	</div>
 {% endif %}
 
-<div class="row border rounded my-3 px-3 py-2" id="yearly-stats"> 
-	<div class="col-lg py-3">
-		{{ stats }}	
+<div class="row my-3 px-3 py-2">
+	<div class="col">
+		<div class="row justify-content-between" id="expenses-stats">	
+			<div class="col-lg-6 py-3">
+				{{ stats }}	
+			</div>
+			<div class="col-lg-6 py-3">
+				{{ categoryAnalysisTable }}
+			</div>
+		</div>
+		
+		<div class="row" id="tables">	
+			<div class="col-lg py-3">
+				{{ breakdownByMonthAnalysisTable }}	
+			</div>				
+		</div>
 	</div>	
 </div>
 
-<div class="row border rounded my-3 px-3 py-2" id="analysis-tables">
-	<div class="col-lg-6 py-3">
-		{{ categoryAnalysisTable }}
-	</div>	
-	<div class="col-lg-6 py-3">
-		{{ breakdownByMonthAnalysisTable }}
-	</div>	
-</div>
 {% endblock %}
