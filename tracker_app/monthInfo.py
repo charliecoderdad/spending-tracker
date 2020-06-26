@@ -42,16 +42,16 @@ class MonthInfo():
 				requiredSpending += expense.amount
 			
 		stats = "<b>Total: $" + str("{:.2f}".format(total) + "</b>")
-		stats += "<br>Discretionary spending: $" + str("{:.2f}".format(discretionarySpending))
-		stats += "<br>Required spending: $" + str("{:.2f}".format(requiredSpending))
+		stats += "<br>Discretionary spending: $" + str("{:.,2f}".format(discretionarySpending))
+		stats += "<br>Required spending: $" + str("{:,.2f}".format(requiredSpending))
 		if (self.isCurrentMonth):
 			dailyAvg = total / datetime.datetime.today().day
 		else:
 			dailyAvg = total / self.num_days
-		stats += "<br>Average daily spending: $" + str("{:.2f}".format(dailyAvg))
+		stats += "<br>Average daily spending: $" + str("{:,.2f}".format(dailyAvg))
 		
 		if (self.isCurrentMonth):
-			stats += "<br><br>Projected final spending: $" + str("{:.2f}".format(dailyAvg * self.num_days))
+			stats += "<br><br>Projected final spending: $" + str("{:,.2f}".format(dailyAvg * self.num_days))
 		return Markup(stats)		
 
 	def getExpenseTable(self):	
@@ -65,7 +65,7 @@ class MonthInfo():
 			table += "<td style='white-space:nowrap'>" + str(formattedDate) + "</td>"
 			table += "<td style='white-space:nowrap'>" + expense.spender.username + "</td>"
 			table += "<td style='white-space:nowrap'>" + expense.myCategory.expenseCategory + "</td>"
-			table += "<td style='white-space:nowrap'>$" + str("{:.2f}".format(expense.amount)) + "</td>"
+			table += "<td style='white-space:nowrap'>$" + str("{:,.2f}".format(expense.amount)) + "</td>"
 			table += "<td>" + expense.description + "</td>"
 			table += "<td style='text-align:center' style='white-space:nowrap' width=80>"
 			table += "<a href= " + url_for('editExpense', expenseId=expense.expenseId) + "><img src=" + url_for('static', filename='edit.png') + " width='25' height='25' title='Edit Record'></a>"

@@ -98,7 +98,7 @@ class YearInfo():
 		daysInyear = 366 if calendar.isleap(self.year) else 365
 		stats = "<b>Total Spent: $" + str("{:,.2f}".format(total) + "</b>")
 		stats += "<br>Total Discretionary Spending: $" + str("{:,.2f}".format(discTotal))
-		stats += "<br>Minimum Required spending: $" + str("{:.2f}".format(requiredTotal))
+		stats += "<br>Minimum Required spending: $" + str("{:,.2f}".format(requiredTotal))
 		if (self.isCurrentYear):
 			dailyAvg = total / self.num_days
 			reqDailyAvg = requiredTotal / self.num_days
