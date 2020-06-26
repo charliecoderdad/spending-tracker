@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, DecimalField, BooleanField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional, ValidationError
 from tracker_app.models import Expense
 from tracker_app import db
 from sqlalchemy import extract
@@ -45,11 +45,17 @@ class NewExpenseForm(FlaskForm):
 	description = TextAreaField('Description', render_kw={"placeholder": "Transaction details"})
 	submit = SubmitField('Create Expense')
 
+def verifyNoSlashes(form, field):
+	if "/" in field.data:
+		raise ValidationError("Field must not contain '/' character")
+
 class NewCategoryForm(FlaskForm):
-	category = StringField('Category', validators=[DataRequired()])
+	category = StringField('Category', validators=[DataRequired(), verifyNoSlashes])
 	discretionary = BooleanField('Discretionary', default=False)
-	submit = SubmitField('Create Category')
+	submitCat = SubmitField('Create Category')
+	
+		
 
 class NewUserForm(FlaskForm):
-	username = 	StringField('Spender', validators=[DataRequired()])
-	submit = SubmitField('Create Spender')
+	username = 	StringField('Spender', validators=[DataRequired(), verifyNoSlashes])
+	submitUser = SubmitField('Create Spender')

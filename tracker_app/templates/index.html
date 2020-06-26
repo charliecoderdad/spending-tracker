@@ -49,9 +49,11 @@
 					{{ newExpenseForm.amount.label }}
 				</div>
 				<div class="col-lg-3">
-					{{ newExpenseForm.amount(class='form-control') }}	
+					{{ newExpenseForm.amount(class='form-control') }}						
 					{% if newExpenseForm.errors.amount %}
-						<span class="text-danger small">{{ newExpenseForm.errors.amount }}</span>
+						{% for error in newExpenseForm.errors.amount %}
+						<span class="text-danger small">{{ error }}</span>
+						{% endfor %}
 					{% endif %}
 				</div>			
 			</div>

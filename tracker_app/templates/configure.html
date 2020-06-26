@@ -17,7 +17,12 @@
 				</div>
 				<div class="col-lg-6">
 					{{ newCategoryForm.category(class='form-control') }}
-				</div>
+					{% if newCategoryForm.errors.category and newCategoryForm.submitCat.data %}
+						{% for error in newCategoryForm.errors.category %}
+						<span class="text-danger small">{{ error }}</span>
+						{% endfor %}
+					{% endif %}
+				</div>					
 			</div>				
 			
 			<div class="form-group row align-items-center">
@@ -32,7 +37,7 @@
 			<div class="form-group row align-items-center">
 				<div class="col-sm-3 text-right "></div>
 				<div class="col-lg-4">
-					{{ newCategoryForm.submit(class='form-control btn btn-primary') }}
+					{{ newCategoryForm.submitCat(class='form-control btn btn-primary') }}
 				</div>
 			</div>				
 		</form>		
@@ -62,13 +67,18 @@
 				</div>
 				<div class="col-lg-6">
 					{{ newUserForm.username(class='form-control') }}
+					{% if newUserForm.errors.username and newUserForm.submitUser.data %}
+						{% for error in newUserForm.errors.username %}
+						<span class="text-danger small">{{ error }}</span>
+						{% endfor %}
+					{% endif %}
 				</div>
 			</div>
 						
 			<div class="form-group row align-items-center">
 				<div class="col-sm-3 text-right "></div>
 				<div class="col-lg-4">
-					{{ newUserForm.submit(class='form-control btn btn-primary') }}
+					{{ newUserForm.submitUser(class='form-control btn btn-primary') }}
 				</div>
 			</div>						
 		</form>
