@@ -41,7 +41,7 @@ class NewExpenseForm(FlaskForm):
 	date = DateField('Expense Date', validators=[DataRequired()], default=datetime.date.today)
 	expenseCategory = SelectField('Expense Category', validators=[DataRequired()], validate_choice=False)
 	spender = SelectField('Spender', validators=[DataRequired()], validate_choice=False)
-	amount = DecimalField('Amount', places=2, validators=[DataRequired(message='Amount must be in monetary format')])
+	amount = DecimalField('Amount', places=2, validators=[DataRequired(message='Amount must be a number')])
 	description = TextAreaField('Description', render_kw={"placeholder": "Transaction details"})
 	submit = SubmitField('Create Expense')
 

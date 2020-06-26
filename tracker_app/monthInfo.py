@@ -41,8 +41,8 @@ class MonthInfo():
 			else:
 				requiredSpending += expense.amount
 			
-		stats = "<b>Total: $" + str("{:.2f}".format(total) + "</b>")
-		stats += "<br>Discretionary spending: $" + str("{:.,2f}".format(discretionarySpending))
+		stats = "<b>Total: $" + str("{:,.2f}".format(total) + "</b>")
+		stats += "<br>Discretionary spending: $" + str("{:,.2f}".format(discretionarySpending))
 		stats += "<br>Required spending: $" + str("{:,.2f}".format(requiredSpending))
 		if (self.isCurrentMonth):
 			dailyAvg = total / datetime.datetime.today().day
