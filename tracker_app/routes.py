@@ -246,4 +246,5 @@ def deleteExpense(expenseId):
 	Expense.query.filter(Expense.expenseId == expenseId).delete()
 	db.session.commit()
 	flash(f"Expense has been successfully removed", "success")
-	return redirect(url_for('monthlyAnalysis'))
+	#return redirect(url_for('monthlyAnalysis'))
+	return redirect(request.referrer)
