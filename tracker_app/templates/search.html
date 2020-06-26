@@ -33,7 +33,10 @@
 				</div>
 				<div class="col-auto align-items-center my-auto">
 					{{ searchForm.submit(class='form-control btn btn-primary') }}
-				</div>	
+				</div>
+				<div class="col-auto align-items-center my-auto">
+					<button class="btn btn-secondary" href={{ url_for('search') }} formmethod="get">Clear</button>
+				</div>
 			</div>							
 		</form>
 	</div>	

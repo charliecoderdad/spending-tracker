@@ -8,17 +8,16 @@ from tracker_app import helpers, db
 class SearchData():
 	def __init__(self, startDate="nodata", endDate="nodata", expenseCategory="nodata", spender="nodata", descText="nodata"):
 		self.startDate = startDate
+		#self.endDate = endDate
 		self.endDate = endDate
+		if self.endDate != "nodata":
+			self.endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d")
+			self.endDate = self.endDate.replace(hour=23, minute=59, second=59)
 		self.expenseCategory = expenseCategory
 		self.spender = spender
 		self.descText = descText
 		
 		queries = []
-		print(f"The class says Start date is {self.startDate}")
-		print(f"The class says End date is {self.endDate}")
-		print(f"The class syas exp Cat is {self.expenseCategory}")
-		print(f"The class syas spender is {self.spender}")
-		print(f"The class syas descText {self.descText}\n\n")
 		
 		if self.startDate != "nodata":
 			print("appending start date query...")
@@ -39,7 +38,7 @@ class SearchData():
 			print("appending description text finder query...")
 			queries.append(Expense.description.contains("%" + self.descText + "%"))
 		
-		self.expenses = db.session.query(Expense).join(Category).join(User).filter(and_(*queries)).all()
+		self.expenses = db.session.query(Expense).join(Category).join(User).filter(and_(*queries)).order_by(Expense.date.desc()).all()
 			
 	def getExpenseTable(self):	
 		expenses = self.expenses

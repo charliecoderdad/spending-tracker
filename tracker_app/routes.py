@@ -1,5 +1,5 @@
 from tracker_app import app, db
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request, Markup
 from tracker_app import forms, monthInfo, yearInfo, categoryTable, searchData
 from tracker_app.models import User, Category, Expense
 from sqlalchemy import and_, extract
@@ -10,9 +10,13 @@ import datetime, calendar
 def search(startDate="nodata", endDate="nodata", category="nodata", spender="nodata", descText="nodata"):
 	searchForm = forms.SearchForm()
 	
-	print(f"Building the searcher with start: {startDate} end: {endDate} cat: {category} spender: {spender} descText: {descText}")
 	searcher = searchData.SearchData(startDate=startDate, endDate=endDate, expenseCategory=category, spender=spender, descText=descText)
-	expenseTable = searcher.getExpenseTable()
+	
+	print(f"Request path: {request.path}")
+	if request.path == ('/search'):
+		expenseTable = Markup("<br><h3>Choose search options</h3>")
+	else:
+		expenseTable = searcher.getExpenseTable()
 	
 	if searchForm.validate_on_submit():
 		formStartDateValue = "nodata" if searchForm.startDate.data is None else searchForm.startDate.data
@@ -20,7 +24,6 @@ def search(startDate="nodata", endDate="nodata", category="nodata", spender="nod
 		formCategoryValue = "nodata" if searchForm.expenseCategory.data is "" else searchForm.expenseCategory.data
 		formSpenderValue = "nodata" if searchForm.spender.data is "" else searchForm.spender.data
 		formDescTextValue = "nodata" if searchForm.descText.data is "" else searchForm.descText.data
-		print(f"***** formValues... start {formStartDateValue} end {formEndDateValue} cat {formCategoryValue} spender {formSpenderValue} descText {formDescTextValue}\n\n")		
 		return redirect(url_for('search', startDate=formStartDateValue, endDate=formEndDateValue, category=formCategoryValue,
 				spender=formSpenderValue, descText=formDescTextValue))
 	
@@ -33,15 +36,35 @@ def search(startDate="nodata", endDate="nodata", category="nodata", spender="nod
 	
 	spenderChoices = [u.username for u in User.query.all()]
 	spenderChoices.append("")
+	searchForm.spender.process_data("")
 	searchForm.spender.choices = spenderChoices
-	searchForm.spender.process_data("")	
+
+	# Set form values (based on prior search should be sticky)
+	if startDate != "nodata":
+		searchForm.startDate.process_data(datetime.datetime.strptime(startDate, "%Y-%m-%d"))
+	if endDate != "nodata":
+		searchForm.endDate.process_data(datetime.datetime.strptime(endDate, "%Y-%m-%d"))
+	if category != "nodata":
+		searchForm.expenseCategory.process_data(category)
+	if spender != "nodata":
+		searchForm.spender.process_data(spender)
+	if descText != "nodata":
+		searchForm.descText.process_data(descText)
+	# End setting sticky forms
+	
 	
 	return render_template("search.html", searchForm=searchForm, expenseTable=expenseTable)
 
 @app.route("/editExpense/<expenseId>", methods=["GET", "POST"])
 def editExpense(expenseId=None):
 	editExpenseForm = forms.EditExpenseForm()
+	global editReferrer	
+	if request.method == "GET":
+		print("We've got a GET method")
+		editReferrer = request.referrer
+		print(f"Referrer found {editReferrer}")
 	if editExpenseForm.validate_on_submit():		
+		print(f"Referrer found inside POST {editReferrer}")
 		newCategoryId = db.session.query(Category.categoryId).filter(Category.expenseCategory == editExpenseForm.expenseCategory.data).first()[0]
 		newSpenderId = db.session.query(User.userId).filter(User.username == editExpenseForm.spender.data).first()[0]
 		
@@ -53,8 +76,9 @@ def editExpense(expenseId=None):
 		e.description = editExpenseForm.description.data		
 		db.session.commit()
 		
-		flash(f"Expense record '{expenseId}' has been successfully udpated", "success")
-		return redirect(url_for('monthlyAnalysis'))
+		flash(f"Expense record '{expenseId}' has been successfully updated", "success")
+		#return redirect(url_for('home'))
+		return redirect(editReferrer)
 	
 	expense = Expense.query.get(expenseId)	
 	
