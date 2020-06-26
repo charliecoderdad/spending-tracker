@@ -51,12 +51,12 @@ class SearchData():
 		for expense in expenses:
 			formattedDate = expense.date.strftime("%B %d, %Y")
 			table += "<tr>"
-			table += "<td>" + str(formattedDate) + "</td>"
-			table += "<td>" + expense.spender.username + "</td>"
-			table += "<td>" + expense.myCategory.expenseCategory + "</td>"
-			table += "<td>$" + str("{:.2f}".format(expense.amount)) + "</td>"
+			table += "<td style='white-space:nowrap'>" + str(formattedDate) + "</td>"
+			table += "<td style='white-space:nowrap'>" + expense.spender.username + "</td>"
+			table += "<td style='white-space:nowrap'>" + expense.myCategory.expenseCategory + "</td>"
+			table += "<td style='white-space:nowrap'>$" + str("{:.2f}".format(expense.amount)) + "</td>"
 			table += "<td>" + expense.description + "</td>"
-			table += "<td style='text-align:center'>"
+			table += "<td style='text-align:center' width='80'>"
 			table += "<a href= " + url_for('editExpense', expenseId=expense.expenseId) + "><img src=" + url_for('static', filename='edit.png') + " width='25' height='25' title='Edit Record'></a>"
 			table += "<a href= " + url_for('deleteExpense', expenseId=expense.expenseId) + "><img src=" + url_for('static', filename='delete.png') + " width='25' height='25' title='Delete Record'></a>"
 			table += "</td>"	
