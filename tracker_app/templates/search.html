@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% set activePage = "search" %}
+
+{% block content %}
+
+<h1 class="text-primary">Search Expense Records</h1>
+
+<div class="row py-3 px-3 border rounded bg-light" id="expense-config-form">
+	<div class="col-auto">
+		<form method="POST" action={{ url_for('search') }}>
+			<div class="row">
+				<div class="form-group">
+					{{ searchForm.csrf_token }}	
+					{{ searchForm.startDate.label(class_='px-2') }}	
+					{{ searchForm.startDate(class_="form-control") }}						
+				</div>
+				
+				<div class="form-group px-3">
+					{{ searchForm.endDate.label(class_='px-2') }} 
+					{{ searchForm.endDate(class_="form-control") }}
+				</div>
+				<div class="col-auto form-group">
+					{{ searchForm.expenseCategory.label(class_='px-2') }}
+					{{ searchForm.expenseCategory(class_="form-control") }}	
+				</div>
+				<div class="col-auto form-group">
+					{{ searchForm.spender.label(class_='px-2') }}
+					{{ searchForm.spender(class_="form-control") }}	
+				</div>
+				<div class="col-auto">
+					{{ searchForm.descText.label(class_='px-2') }}
+					{{ searchForm.descText(class_="form-control") }}	
+				</div>
+				<div class="col-auto align-items-center my-auto">
+					{{ searchForm.submit(class='form-control btn btn-primary') }}
+				</div>	
+			</div>							
+		</form>
+	</div>	
+</div>
+
+<div class="row">
+	<div class="col-lg">
+		{{ expenseTable }}
+	</div>
+</div>
+
+{% endblock %}

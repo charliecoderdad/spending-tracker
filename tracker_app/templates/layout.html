@@ -10,18 +10,25 @@
 <body>	
 	<div class="container">		
 		<!-- Build out site nav -->						
-		<div class="row my-3" id="sitenav">			
-			<nav class="nav nav-pills nav-fill">
-				{% set navigation_bar = [
-					('home', 'Home'),
-					('monthlyAnalysis', 'Monthly Analysis'),
-					('yearlyAnalysis', 'Yearly Analysis'),
-					('configure', 'Settings')
-				] %}
-				{% for id, text in navigation_bar %}
-					<a class="nav-item nav-link {% if id == activePage %} active{% endif %}" href="{{ url_for(id) }}">{{ text }}</a>
-				{% endfor %}
-			</nav>			
+		<div class="row my-3" id="sitenav">
+			<div class="col-auto">
+				<nav class="nav nav-pills nav-fill">
+					{% set navigation_bar = [
+						('home', 'Home'),
+						('monthlyAnalysis', 'Monthly Analysis'),
+						('yearlyAnalysis', 'Yearly Analysis'),
+						('search', 'Search'),
+					] %}
+					{% for id, text in navigation_bar %}
+						<a class="nav-item nav-link {% if id == activePage %} active{% endif %}" href="{{ url_for(id) }}">{{ text }}</a>
+					{% endfor %}
+				</nav>
+			</div>
+			<div class="col text-right">
+				<a href="{{ url_for('configure') }}">
+					<button class="btn btn-secondary">Settings</button>
+				</a>
+			</div>			
 		</div>
 		<!-- END: Build out site nav -->
 

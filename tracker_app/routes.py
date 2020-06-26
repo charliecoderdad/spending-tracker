@@ -1,20 +1,47 @@
 from tracker_app import app, db
 from flask import render_template, url_for, flash, redirect
-from tracker_app import forms, monthInfo, yearInfo, categoryTable
+from tracker_app import forms, monthInfo, yearInfo, categoryTable, searchData
 from tracker_app.models import User, Category, Expense
 from sqlalchemy import and_, extract
 import datetime, calendar
 
+@app.route("/search", methods=["GET", "POST"])
+@app.route("/search/<startDate>/<endDate>/<category>/<spender>/<descText>", methods=["GET", "POST"])
+def search(startDate="nodata", endDate="nodata", category="nodata", spender="nodata", descText="nodata"):
+	searchForm = forms.SearchForm()
+	
+	print(f"Building the searcher with start: {startDate} end: {endDate} cat: {category} spender: {spender} descText: {descText}")
+	searcher = searchData.SearchData(startDate=startDate, endDate=endDate, expenseCategory=category, spender=spender, descText=descText)
+	expenseTable = searcher.getExpenseTable()
+	
+	if searchForm.validate_on_submit():
+		formStartDateValue = "nodata" if searchForm.startDate.data is None else searchForm.startDate.data
+		formEndDateValue = "nodata" if searchForm.endDate.data is None else searchForm.endDate.data
+		formCategoryValue = "nodata" if searchForm.expenseCategory.data is "" else searchForm.expenseCategory.data
+		formSpenderValue = "nodata" if searchForm.spender.data is "" else searchForm.spender.data
+		formDescTextValue = "nodata" if searchForm.descText.data is "" else searchForm.descText.data
+		print(f"***** formValues... start {formStartDateValue} end {formEndDateValue} cat {formCategoryValue} spender {formSpenderValue} descText {formDescTextValue}\n\n")		
+		return redirect(url_for('search', startDate=formStartDateValue, endDate=formEndDateValue, category=formCategoryValue,
+				spender=formSpenderValue, descText=formDescTextValue))
+	
+	
+	sortedCategoriesList = [c.expenseCategory for c in Category.query.all()]
+	sortedCategoriesList.sort()
+	sortedCategoriesList.append("")
+	searchForm.expenseCategory.choices = sortedCategoriesList
+	searchForm.expenseCategory.process_data("")
+	
+	spenderChoices = [u.username for u in User.query.all()]
+	spenderChoices.append("")
+	searchForm.spender.choices = spenderChoices
+	searchForm.spender.process_data("")	
+	
+	return render_template("search.html", searchForm=searchForm, expenseTable=expenseTable)
+
 @app.route("/editExpense/<expenseId>", methods=["GET", "POST"])
 def editExpense(expenseId=None):
 	editExpenseForm = forms.EditExpenseForm()
-	if editExpenseForm.validate_on_submit():
-		print(f"charlie: id {expenseId}")
-		print(f"charlie: new spender {editExpenseForm.spender.data}")
-		print(f"charlie: new category {editExpenseForm.expenseCategory.data}")
-		print(f"charlie: new amount {editExpenseForm.amount.data}")
-		print(f"charlie: new description {editExpenseForm.description.data}")
-		
+	if editExpenseForm.validate_on_submit():		
 		newCategoryId = db.session.query(Category.categoryId).filter(Category.expenseCategory == editExpenseForm.expenseCategory.data).first()[0]
 		newSpenderId = db.session.query(User.userId).filter(User.username == editExpenseForm.spender.data).first()[0]
 		

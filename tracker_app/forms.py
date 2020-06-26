@@ -1,11 +1,19 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, DecimalField, BooleanField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 from tracker_app.models import Expense
 from tracker_app import db
 from sqlalchemy import extract
 import datetime
+
+class SearchForm(FlaskForm):
+	startDate = DateField('Start Date', default="", validators=[Optional()])
+	endDate = DateField('End Date', default="", validators=[Optional()])
+	expenseCategory = SelectField('Category', validate_choice=False)
+	spender = SelectField('Spender', validate_choice=False)
+	descText = StringField('Description')
+	submit = SubmitField('Search')
 
 class EditExpenseForm(FlaskForm):
 	# Get list of categories for category pull down		
