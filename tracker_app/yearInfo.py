@@ -13,7 +13,6 @@ class YearInfo():
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
 		self.num_days = (self.endDate - self.startDate).days + 1
-		print(f"Charlie debug: s: {self.startDate} e: {self.endDate} nd: {self.num_days}")
 		self.spender = spender
 		if (self.spender == "All"):
 			self.spender = None
@@ -137,11 +136,15 @@ class YearInfo():
 		if (month == 1 or self.isCurrentYear == "False"):
 			return datetime.date(self.year, 1, 1)
 		else:
-			my_num_days = calendar.monthrange(self.year, int(month))[1]
-			start_date = datetime.datetime(self.year, int(month), 1)
-			end_date = datetime.datetime(self.year, int(month), my_num_days)		
-			day = Expense.query.filter(and_(
-							Expense.date >= start_date,
-							Expense.date <= end_date
-						)).first().date.day
-			return datetime.date(self.year, int(month), int(day))
+			firstExpRecord = db.session.query(func.min(Expense.date)).filter(extract('year', Expense.date) == self.year).first()[0]
+
+			#my_num_days = calendar.monthrange(self.year, int(month))[1]
+			#start_date = datetime.datetime(self.year, int(month), 1)
+			#end_date = datetime.datetime(self.year, int(month), my_num_days)					
+			#day = Expense.query.filter(and_(
+			#				Expense.date >= start_date,
+			#				Expense.date <= end_date
+			#			)).first().date.day
+			#return datetime.date(self.year, int(month), int(day))
+			print(f"First exp record date: {firstExpRecord}")
+			return firstExpRecord.date()
