@@ -1,1 +1,3 @@
 __pycache__/
+tracker_app/__init__.pyc
+tracker_app/*.db
