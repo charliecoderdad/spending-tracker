@@ -6,12 +6,16 @@ from sqlalchemy import and_, func, extract
 import calendar, datetime
 from tracker_app import db
 from collections import OrderedDict
+from calendar import monthrange
 
 
 class CategoryTable():
 	def __init__(self, year, month=None, spender=None):
-		self.year = int(year)	
-		self.month = month
+		self.year = int(year)
+		if month is not None:
+			self.month = int(month)
+		else:
+			self.month = None
 		self.spender = spender
 		if self.spender == "All":
 			self.spender = None
@@ -67,29 +71,21 @@ class CategoryTable():
 		table += helpers.getTableHeadTags(tableHeaders)		
 		for cat in catDict:
 			table += "<tr>"
-			table += "<td>" + str(cat) + "</td>"
+						
+			# Need to get the link for the search based on entire year				
+			if self.month is None:
+				myStart = datetime.date(self.year, 1, 1)
+				myEnd = datetime.date(self.year, 12, 31)
+				link = url_for('search', startDate=myStart, endDate=myEnd, category=cat, spender="nodata", descText="nodata")
+			else:
+				#Need to get link for the search based on current month
+				myStart = datetime.date(self.year, self.month, 1)
+				myNumDays = calendar.monthrange(self.year, self.month)[1]
+				myEnd = datetime.date(self.year, self.month, myNumDays)
+				link = url_for('search', startDate=myStart, endDate=myEnd, category=cat, spender="nodata", descText="nodata")
+			table += "<td><a href=" + link + " class='catlink'>" + str(cat) + "</a></td>"
 			table += "<td>$" + str("{:,.2f}".format(catDict[cat]['total'])) + "</td>"
 			table += "<td>" + str("{:,.2f}".format(catDict[cat]['percent'])) + "%</td>"
 		table += "</table>"
 		
 		return Markup(table)
-		
-	def getEndDate(self):
-		if (self.isCurrentYear == "False"):
-			return datetime.date(self.year, 12, 31)
-		else:
-			return datetime.date(self.year, datetime.datetime.today().month, datetime.datetime.today().day)
-	
-	def getStartDate(self):
-		month = db.session.query(func.min(extract('month', Expense.date))).filter(extract('year', Expense.date)==2020).distinct().scalar()
-		if (month == 1 or self.isCurrentYear == "False"):
-			return datetime.date(self.year, 1, 1)
-		else:
-			my_num_days = calendar.monthrange(self.year, int(month))[1]
-			start_date = datetime.date(self.year, int(month), 1)
-			end_date = datetime.date(self.year, int(month), my_num_days)		
-			day = Expense.query.filter(and_(
-							Expense.date >= start_date,
-							Expense.date <= end_date
-						)).first().date.day
-			return datetime.date(self.year, int(month), int(day))
