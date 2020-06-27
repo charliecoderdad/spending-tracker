@@ -2,11 +2,10 @@ from flask import Markup, url_for
 from tracker_app.models import Expense, User
 from tracker_app import helpers
 import datetime
-from sqlalchemy import and_, func, extract
+from sqlalchemy import and_, extract
 import calendar, datetime
 from tracker_app import db
 from collections import OrderedDict
-from calendar import monthrange
 
 
 class CategoryTable():

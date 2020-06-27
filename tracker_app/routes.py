@@ -12,7 +12,6 @@ def search(startDate="nodata", endDate="nodata", category="nodata", spender="nod
 	
 	searcher = searchData.SearchData(startDate=startDate, endDate=endDate, expenseCategory=category, spender=spender, descText=descText)
 	
-	print(f"Request path: {request.path}")
 	if request.path == ('/search'):
 		expenseTable = Markup("<br><h3>Choose search options</h3>")
 	else:
@@ -60,11 +59,8 @@ def editExpense(expenseId=None):
 	editExpenseForm = forms.EditExpenseForm()
 	global editReferrer	
 	if request.method == "GET":
-		print("We've got a GET method")
 		editReferrer = request.referrer
-		print(f"Referrer found {editReferrer}")
 	if editExpenseForm.validate_on_submit():		
-		print(f"Referrer found inside POST {editReferrer}")
 		newCategoryId = db.session.query(Category.categoryId).filter(Category.expenseCategory == editExpenseForm.expenseCategory.data).first()[0]
 		newSpenderId = db.session.query(User.userId).filter(User.username == editExpenseForm.spender.data).first()[0]
 		

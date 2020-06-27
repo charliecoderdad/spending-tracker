@@ -20,22 +20,16 @@ class SearchData():
 		queries = []
 		
 		if self.startDate != "nodata":
-			print("appending start date query...")
 			queries.append(Expense.date >= self.startDate)			
 		if self.endDate != "nodata":
-			print("appending end date query...")
 			queries.append(Expense.date <= self.endDate)
 		if self.expenseCategory != "nodata":
-			print("appending category query...")
 			catId = db.session.query(Category.categoryId).filter(Category.expenseCategory == self.expenseCategory).first()[0]
-			print("Found we should be looking for expenses with cat ID of {catId}\n")
 			queries.append(Expense.categoryId == catId)
 		if self.spender != "nodata":
-			print("appending spender query...")
 			spId = db.session.query(User.userId).filter(User.username == self.spender).first()[0]
 			queries.append(Expense.spenderId == spId)
 		if self.descText != "nodata":
-			print("appending description text finder query...")
 			queries.append(Expense.description.contains("%" + self.descText + "%"))
 		
 		self.expenses = db.session.query(Expense).join(Category).join(User).filter(and_(*queries)).order_by(Expense.date.desc()).all()
