@@ -1,15 +1,13 @@
 {% extends 'layout.html' %}
-{% set activePage = "configure" %}
 
 {% block content %}
-<h1 class="text-primary">Settings for Spending Tracker</h1>
 
 <div class="row border rounded py-3" id="expenses-config">	
 	
 	<div class="col-lg">
 		<h3>Create Expense Category</h3>
 		
-		<form method="POST" action={{ url_for('configure') }}>
+		<form method="POST" action={{ url_for('settings') }}>
 			<div class="form-group row align-items-center">
 				<div class="col-sm-3 text-right ">
 					{{ newCategoryForm.csrf_token }}
@@ -59,7 +57,7 @@
 <div class="row border rounded my-3 py-3" id="users-config">	
 	<div class="col-sm">
 		<h3>Create Spender</h3>
-		<form method="POST" action={{ url_for('configure') }}>
+		<form method="POST" action={{ url_for('settings') }}>
 			<div class="form-group row align-items-center">
 				<div class="col-sm-3 text-right ">
 					{{ newUserForm.csrf_token }}

@@ -5,6 +5,18 @@
 }
 
 textarea {
-  width: 400px;
-  height: 125px;
+	width: 400px;
+	height: 125px;
+}
+
+h1#page-header {
+	color: #990099;
+	font-family: Bitter;
+	text-shadow: 1px 1px 3px blue;
+	font-size: 70px;
+}
+
+#heading-logo {
+	width: 80px;
+	height: 80px;
 }

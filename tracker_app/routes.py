@@ -52,7 +52,8 @@ def search(startDate="nodata", endDate="nodata", category="nodata", spender="nod
 	# End setting sticky forms
 	
 	
-	return render_template("search.html", searchForm=searchForm, expenseTable=expenseTable, spender=spender)
+	return render_template("search.html", searchForm=searchForm, expenseTable=expenseTable, spender=spender,
+			heading="Search Records")
 
 @app.route("/editExpense/<expenseId>", methods=["GET", "POST"])
 def editExpense(expenseId=None):
@@ -124,8 +125,9 @@ def yearlyAnalysis(year=None, spender=None):
 	stats = analysis.getYearlyStats()
 	breakdownByMonthAnalysisTable = analysis.breakdownByMonthAnalysisTable()	
 	
-	return render_template('yearlyAnalysis.html', yearlyForm=yearlyForm, stats=stats, yearStr=year,
-			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable, spender=spender)
+	return render_template('yearlyAnalysis.html', yearlyForm=yearlyForm, stats=stats, 
+			categoryAnalysisTable=categoryAnalysisTable, breakdownByMonthAnalysisTable=breakdownByMonthAnalysisTable,
+			spender=spender, heading="Analysis - " + str(year))
 
 @app.route("/monthlyAnalysis/", methods=["GET", "POST"])
 @app.route("/monthlyAnalysis/<year>/<month>/<spender>", methods=["GET", "POST"])
@@ -142,7 +144,7 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 	
 	expenseTable = analysis.getExpenseTable()
 	stats = analysis.getMonthlyExpenseStats()
-	monthStr = str(calendar.month_name[int(month)]) + ", " + str(year)
+	monthStr = "Analysis - " + str(calendar.month_name[int(month)]) + ", " + str(year)
 
 	monthlyForm = forms.MonthlyAnalysisConfigureForm()		
 	if monthlyForm.validate_on_submit():
@@ -167,7 +169,7 @@ def monthlyAnalysis(year=None, month=None, spender=None):
 		monthlyForm.spender.process_data(spender)
 		
 	return render_template('monthlyData.html', categoryAnalysisTable=categoryAnalysisTable, expenseTable=expenseTable, stats=stats, 
-		monthStr=monthStr, monthlyForm=monthlyForm, spender=spender)
+		monthlyForm=monthlyForm, spender=spender, heading=monthStr)
 
 @app.route("/", methods=["GET","POST"])
 @app.route("/<lastUser>", methods=["GET","POST"])
@@ -190,10 +192,10 @@ def home(lastUser=None):
 		db.session.commit()
 		flash(f"Created a new expense record", "info")
 		return redirect(url_for('home', lastUser=newExpenseForm.spender.data))
-	return render_template('index.html', newExpenseForm=newExpenseForm)   
+	return render_template('index.html', newExpenseForm=newExpenseForm, heading="New Expense")   
     
-@app.route("/configure", methods=["GET","POST"])
-def configure():
+@app.route("/settings", methods=["GET","POST"])
+def settings():
 	newUserForm = forms.NewUserForm()
 	newCategoryForm = forms.NewCategoryForm()
 	if newUserForm.validate_on_submit():		
@@ -204,7 +206,7 @@ def configure():
 			db.session.add(user)
 			db.session.commit()
 			flash(f"User '{user.username}' has been successfully added", "success")
-		return redirect(url_for('configure'))
+		return redirect(url_for('settings'))
 	if newCategoryForm.validate_on_submit():		
 		if bool(db.session.query(Category).filter(Category.expenseCategory == newCategoryForm.category.data).first()):
 			flash(f"Error adding new category.  '{newCategoryForm.category.data}' already exists.", "danger")
@@ -213,9 +215,10 @@ def configure():
 			db.session.add(cat)
 			db.session.commit()
 			flash(f"User '{cat.expenseCategory}' has been successfully added", "success")
-		return redirect(url_for('configure'))
-	return render_template('configure.html', users=User.query.order_by(User.username).all(), newUserForm=newUserForm,
-				newCategoryForm=newCategoryForm, categories=Category.query.order_by(Category.expenseCategory).all())
+		return redirect(url_for('settings'))
+	return render_template('settings.html', users=User.query.order_by(User.username).all(), newUserForm=newUserForm,
+				newCategoryForm=newCategoryForm, categories=Category.query.order_by(Category.expenseCategory).all(),
+				heading="Settings")
 
 @app.route("/deleteCategory/<categoryId>", methods=["GET","POST"])
 def deleteCategory(categoryId):
@@ -228,7 +231,7 @@ def deleteCategory(categoryId):
 		Category.query.filter(Category.categoryId == categoryId).delete()
 		db.session.commit()
 		flash(f"Category '{deletedCategory}' has been successfully removed", "success")
-	return redirect(url_for('configure'))
+	return redirect(url_for('settings'))
 	
 @app.route("/deleteUser/<userId>", methods=["GET","POST"])
 def deleteUser(userId):
@@ -240,7 +243,7 @@ def deleteUser(userId):
 		User.query.filter(User.userId == userId).delete()
 		db.session.commit()
 		flash(f"User '{deletedUser}' has been successfully removed", "success")
-	return redirect(url_for('configure'))
+	return redirect(url_for('settings'))
 	
 @app.route("/deleteExpense/<expenseId>", methods=["GET","POST"])
 def deleteExpense(expenseId):
