@@ -71,17 +71,21 @@ class CategoryTable():
 		for cat in catDict:
 			table += "<tr>"
 						
-			# Need to get the link for the search based on entire year				
+			# Need to get the link for the search based on entire year
+			if self.spender is None:
+				mySpender = "nodata"
+			else:
+				mySpender = self.spender
 			if self.month is None:
 				myStart = datetime.date(self.year, 1, 1)
 				myEnd = datetime.date(self.year, 12, 31)
-				link = url_for('search', startDate=myStart, endDate=myEnd, category=cat, spender="nodata", descText="nodata")
+				link = url_for('search', startDate=myStart, endDate=myEnd, category=cat, spender=mySpender, descText="nodata")
 			else:
 				#Need to get link for the search based on current month
 				myStart = datetime.date(self.year, self.month, 1)
 				myNumDays = calendar.monthrange(self.year, self.month)[1]
-				myEnd = datetime.date(self.year, self.month, myNumDays)
-				link = url_for('search', startDate=myStart, endDate=myEnd, category=cat, spender="nodata", descText="nodata")
+				myEnd = datetime.date(self.year, self.month, myNumDays)				
+				link = url_for('search', startDate=myStart, endDate=myEnd, category=cat, spender=mySpender, descText="nodata")
 			table += "<td><a href=" + link + " class='catlink'>" + str(cat) + "</a></td>"
 			table += "<td>$" + str("{:,.2f}".format(catDict[cat]['total'])) + "</td>"
 			table += "<td>" + str("{:,.2f}".format(catDict[cat]['percent'])) + "%</td>"

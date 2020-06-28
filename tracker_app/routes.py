@@ -52,7 +52,7 @@ def search(startDate="nodata", endDate="nodata", category="nodata", spender="nod
 	# End setting sticky forms
 	
 	
-	return render_template("search.html", searchForm=searchForm, expenseTable=expenseTable)
+	return render_template("search.html", searchForm=searchForm, expenseTable=expenseTable, spender=spender)
 
 @app.route("/editExpense/<expenseId>", methods=["GET", "POST"])
 def editExpense(expenseId=None):
