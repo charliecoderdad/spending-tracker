@@ -2,6 +2,8 @@
 {% set activePage = "search" %}
 
 {% block content %}
+<script type="text/javascript" src={{ url_for('static', filename="sort-table.js") }}></script>
+
 <script>
 function expenseIdToDelete(theId) {
 	console.log("Got into expense id to delete JS function");
