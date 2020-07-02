@@ -7,7 +7,7 @@ from tracker_app import helpers, db
 
 class MonthInfo():
 	def __init__(self, year, month, spender=None):
-		self.year = year
+		self.year = int(year)
 		self.month = month
 
 		self.num_days = calendar.monthrange(int(self.year), int(self.month))[1]
@@ -53,6 +53,8 @@ class MonthInfo():
 		stats += "<tr><td>Avg. Daily Spending</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
 		if (self.isCurrentMonth):
 			stats += "<tr><td>Projected Final Spending</td><td>$" + str("{:,.2f}".format(dailyAvg * self.num_days)) + "</td.</tr>"
+		daysInyear = 366 if calendar.isleap(self.year) else 365
+		stats += "<tr><td>Projected Yearly Spending</td><td>$" + str("{:,.2f}".format(dailyAvg * daysInyear)) + "</td.</tr>"
 		stats += "</table>"
 		return Markup(stats)		
 
