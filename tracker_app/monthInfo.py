@@ -21,7 +21,7 @@ class MonthInfo():
 			self.expenses = db.session.query(Expense).filter(and_(
 						Expense.date >= start_date,
 						Expense.date <= end_date
-					)).order_by(Expense.date.desc()).all()		
+					)).order_by(Expense.date.desc(), Expense.expenseId.desc()).all()		
 		else:
 			self.expenses = db.session.query(Expense).join(User).filter(and_(
 						Expense.date >= start_date,
