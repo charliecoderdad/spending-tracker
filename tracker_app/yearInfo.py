@@ -13,6 +13,7 @@ class YearInfo():
 		self.startDate = self.getStartDate()
 		self.endDate = self.getEndDate()
 		self.num_days = (self.endDate - self.startDate).days + 1
+		self.curr_days = (datetime.datetime.today() - datetime.datetime.combine(self.startDate, datetime.datetime.min.time())).days + 1
 		self.spender = spender
 		if (self.spender == "All"):
 			self.spender = None
@@ -107,7 +108,7 @@ class YearInfo():
 		stats += "<tr><td><b>Total</b></td><td><b>$" + str("{:,.2f}".format(total)) + "</b></td.</tr>"
 		stats += "<tr><td>Minimum Amount Spent</td><td>$" + str("{:,.2f}".format(requiredTotal)) + "</td.</tr>"
 		stats += "<tr><td>Discretionary Amount Spent</td><td>$" + str("{:,.2f}".format(discTotal)) + "</td.</tr>"
-		stats += "<tr><td>Avg. Daily Spending</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
+		stats += "<tr><td>Avg. Daily Spending (through " + str(self.curr_days) + " days)</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
 		if self.isCurrentYear:
 			stats += "<tr><td>Projected Final Yearly Spending</td><td>$" + str("{:,.2f}".format(dailyAvg * daysInyear)) + "</td.</tr>"
 			stats += "<tr><td>Projected Final Minimal Yearly Spending</td><td>$" + str("{:,.2f}".format(reqDailyAvg * daysInyear)) + "</td.</tr>"

@@ -11,6 +11,7 @@ class MonthInfo():
 		self.month = month
 
 		self.num_days = calendar.monthrange(int(self.year), int(self.month))[1]
+		self.curr_days = datetime.datetime.today().day
 		start_date = datetime.datetime(int(self.year), int(self.month), 1)
 		end_date = datetime.datetime(int(self.year), int(self.month), self.num_days)
 		self.isCurrentMonth = bool(int(year) == datetime.datetime.today().year and int(month) == datetime.datetime.today().month)
@@ -50,7 +51,7 @@ class MonthInfo():
 		stats += "<tr><td><b>Total</b></td><td><b>$" + str("{:,.2f}".format(total)) + "</b></td.</tr>"
 		stats += "<tr><td>Minimum Amount Spent</td><td>$" + str("{:,.2f}".format(requiredSpending)) + "</td.</tr>"
 		stats += "<tr><td>Discretionary Amount Spent</td><td>$" + str("{:,.2f}".format(discretionarySpending)) + "</td.</tr>"
-		stats += "<tr><td>Avg. Daily Spending</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
+		stats += "<tr><td>Avg. Daily Spending (through " + str(self.curr_days) + " days)</td><td>$" + str("{:,.2f}".format(dailyAvg)) + "</td.</tr>"
 		if (self.isCurrentMonth):
 			stats += "<tr><td>Projected Final Spending</td><td>$" + str("{:,.2f}".format(dailyAvg * self.num_days)) + "</td.</tr>"
 		daysInyear = 366 if calendar.isleap(self.year) else 365
